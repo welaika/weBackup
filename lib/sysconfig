@@ -1,0 +1,6 @@
+# Script version
+VERSION="1.0"
+# Delay backup execution
+DELAY=3
+# From 0 ( none ) to 9 ( noisiest ), according with rdiff-backup man
+RDIFF_VERBOSITY=3

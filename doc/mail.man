@@ -1,0 +1,117 @@
+MAIL(1)                            User Commands                           MAIL(1)
+
+
+
+NAME
+       mail - manual page for mail (GNU Mailutils 2.1)
+
+SYNOPSIS
+       mail [OPTION...] [address...]
+       mail [OPTION...] -f [OPTION...] [file]
+       mail [OPTION...] --file [OPTION...] [file]
+       mail [OPTION...] --file=file [OPTION...]
+
+DESCRIPTION
+       GNU  mail  -- process mail messages If -f or --file is given, mail operates
+       on the mailbox named by the first argument, or the user's mbox, if no argu‐
+       ment given.
+
+       -a, --append=HEADER: VALUE append given header to the message being sent
+
+       -e, --exist
+              return true if mail exists
+
+       -E, --exec=COMMAND
+              execute COMMAND
+
+       -F, --byname
+              save messages according to sender
+
+       -H, --headers
+              write a header summary and exit
+
+       -i, --ignore
+              ignore interrupts
+
+       -n, --norc
+              do not read the system mailrc file
+
+       -N, --nosum
+              do not display initial header summary
+
+       -p, -r, --print, --read
+              print all mail to standard output
+
+       -q, --quit
+              cause interrupts to terminate program
+
+       -s, --subject=SUBJ
+              send a message with the given SUBJECT
+
+       -t, --to
+              precede message by a list of addresses
+
+       -u, --user=USER
+              operate on USER's mailbox
+
+       --tls[=BOOL]
+              enable TLS support
+
+              Common options
+
+       --config-file=FILE, --rcfile=FILE
+              load this configuration file
+
+       --config-help
+              show configuration file summary
+
+       --config-lint, --rcfile-lint
+              check configuration file syntax and exit
+
+       --config-verbose, --rcfile-verbose
+              verbosely log parsing of the configuration files
+
+       --no-site-config, --no-site-rcfile
+              do not load site configuration file
+
+       --no-user-config, --no-user-rcfile
+              do not load user configuration file
+
+       --show-config-options
+              show compilation options
+
+              Global debugging settings
+
+       --debug-level=LEVEL
+              set Mailutils debugging level
+
+       --debug-line-info
+              show source info with debugging messages
+
+       --license
+              print license and exit
+
+       -?, --help
+              give this help list
+
+       --usage
+              give a short usage message
+
+       -V, --version
+              print program version
+
+       Mandatory  or  optional  arguments  to  long  options are also mandatory or
+       optional for any corresponding short options.
+
+REPORTING BUGS
+       Report bugs to <bug-mailutils@gnu.org>.
+
+SEE ALSO
+       The complete GNU mailutils manual is not available in Debian systems due to
+       licensing  reasons.  You  can  find this manual online in the GNU mailutils
+       webpage:
+       http://www.gnu.org/software/mailutils/manual/index.html.
+
+
+
+FSF                                February 2010                           MAIL(1)

@@ -1,0 +1,113 @@
+
+#	Backup function library for Backup Script 
+#
+#	Version: 0.5
+
+# backup (  )
+function backup() {
+	
+	if [[ ! $(ls -A $CONF_DIR) ]]; then
+		echo ""
+		echo "No host file specified in '$CONF_DIR'"
+		echo "Stopping backup"
+		echo ""
+		exit
+	fi
+
+	if [ $VERBOSE -eq 1 ]; then
+		echo -e "Backup local disk: "$BACKUP_DIR | tee -a $LOG
+		echo -e "Backup local conf: "$CONF_DIR | tee -a $LOG
+		echo -e "Log file         : "$LOG | tee -a $LOG
+		echo ""
+	
+		echo "Hosts:" | tee -a $LOG
+		for host in `ls $CONF_DIR`
+		do
+			echo "> "$host | tee -a $LOG
+		done
+		echo "" | tee -a $LOG
+		
+		echo -n "Startin backup"
+		backup_delay $DELAY 1
+	else
+		backup_delay $DELAY 0
+	fi
+
+	for host in `ls $CONF_DIR`
+	do
+		if [ $VERBOSE -eq 1 ]; then
+			echo "Inizio Backup per: "$host | tee -a $LOG
+			echo "" | tee -a $LOG
+		fi
+		
+		if [ ! $DEBUG -eq 1 ]; then
+			dest_dir $host
+		fi
+
+		if [ $DEBUG -eq 1 ]; then
+			echo ">> rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist "$CONF_DIR"/"$host" --exclude / root@"$host"::/" $BACKUP_DIR"/"$host | tee -a $LOG
+			echo "" | tee -a $LOG
+			rdiff-backup --test-server root@${host}::/ | tee -a $LOG
+			echo "" | tee -a $LOG 
+		fi
+		
+		if [ ! $DEBUG -eq 1 ]; then
+			if [ $VERBOSE -eq 1 ]; then
+				rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host} --exclude / root@${host}::/ ${BACKUP_DIR}/${host} 2>&1 | tee -a $LOG
+				echo "" | tee -a $LOG
+			else
+				rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --include-globbing-filelist ${CONF_DIR}/${host} --exclude / root@${host}::/ ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
+				echo "" >> $LOG
+			fi
+		fi
+				
+		echo "" | tee -a $LOG
+	done
+	
+}
+
+# dest_dir ( string name )
+function dest_dir() {
+	local dir=$BACKUP_DIR"/"$1
+	
+	if [ -d $dir ]; then
+		if [ $VERBOSE -eq 1 ]; then
+			echo "> Backup directory for host exists" | tee -a $LOG
+		fi
+	else
+		if [ $VERBOSE -eq 1 ]; then
+			echo "> Backup directory for host does not exists; creating..." | tee -a $LOG
+		fi
+		
+		mkdir $dir
+		
+		if [ -d $dir ]; then
+			if [ $VERBOSE -eq 1 ]; then
+				echo "> Created: "$dir | tee -a $LOG
+			fi
+		else
+			echo "> FAILED! Backup ABORTED ( err: "$?" )" | tee -a $LOG
+			exit $?
+		fi
+	fi
+	
+	return 0
+}
+
+# delay ( int time, bool stdout )
+function backup_delay() {
+	local delay_time=$1
+	local stdout=$2
+	
+	for i in `seq $delay_time -1 1`
+	do
+		if [ $stdout -eq 1 ]; then
+			echo -e -n "."
+		fi
+		sleep 1
+	done
+	
+	if [ $stdout -eq 1 ]; then
+		echo -e "\n"
+	fi
+}

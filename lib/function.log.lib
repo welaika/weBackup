@@ -1,0 +1,44 @@
+
+#	Log function library for Backup Script
+#
+#	Version: 0.4
+
+# create_log ( string dir, string extension, string prefix, string suffix )
+function create_log() {
+	local log_dir=$1
+	local log_extension=$2
+	local log_prefix=$3
+	local log_suffix=$4
+	
+	local log_sd=$log_dir"/"$(date '+%Y')
+	local log_ssd=$log_sd"/"$(date '+%m')
+	local log_sssd=$log_ssd"/"$(date '+%d')
+	
+	local LOG=$log_sssd"/"$log_prefix$(date '+%H%M%S')$log_suffix$log_extension
+	
+	local i=0
+	
+	while [  $i -eq 0 ]; do
+		 if [ -d $log_dir ]; then
+			if [ -d $log_sd ]; then
+				if [ -d $log_ssd ]; then
+					if [ -d $log_sssd ]; then
+						echo $(date '+%d/%m/%Y')" - "$(date '+%H:%M:%S') > $LOG
+						local i=1
+					else
+						mkdir $log_sssd
+					fi
+				else
+					mkdir $log_ssd
+				fi
+			else
+				mkdir $log_sd
+			fi
+		 else
+			mkdir $log_dir
+		 fi
+	 done
+	 
+	 # return log file name
+	 echo $LOG
+}

@@ -1,11 +1,68 @@
-rdiff-backup BASH script is a little script I wrote to perform backup operation easily.
+Backup Script
+-------------
+This is a little script I wrote to perform backup operation easily.
 
-== Host / Destination configuration
-The script is developed to be used with a single "Backuper" host that pull data from several servers.
+Uses rdiff-backup to create backup of remote host in local folder.
 
-== Backup & Restore
+
+INSTALL
+-------
+1. Untar package
+2. Install rdiff-backup on local machine
+3. Install a mail server ( used to send mail with logs after backup
+  complete )
+4. Install rdiff-backup on every remote machine you need to backup
+  1. See "HOW TO - HOW IT WORKS" before next step
+5. Copy "configure.tpl" to "configure" and edit file accord to your
+  needs
+6. Put inside "conf" directory files related to host you want to backup
+7. Run script
+  ./backup.sh [OPTIONS] [COMMAND]
+  See ./backup.sh -h
+
+ 
+HOW TO - HOW IT WORKS
+---------------------
+The script is developed to be used with a single "backuper" host that
+pulls data from several servers.
+
+To let rdiff-backup perform backups, a ssh access to the machine that 
+needs backup must be provided. rdiff-backup use 'root' account to
+connect using ssh ( and this cannot be changed ) so the best way to
+accomplish this is enabling ssh login to root accont on server only 
+with ssh keys ( disabling access with password )
+
+
+HOW TO - HOST SPECIFICATION
+---------------------------
+Files inside "conf" directory must be written in a specific way:
+ - name of the file must match the host name you want to backup
+  ( is used to connect to host via ssh )
+ - inside every file specify a list on new-line separated folders
+  with absolute path
+  
+Example:
+  host: subdomain.example.org
+  
+  file name: subdomain.example.org
+  file content:
+    /home
+    /var/log
+    /etc
+
+
+BACKUP & RESTORE
+----------------
 Actually only backup function is implemented.
 
 Restore is a little bit more difficult: in my case the "backuper" is in a LAN, and cannot be accessed directly. In this case the operation ( reported from rdiff-backup mailing list ) consist in several steps: 
 - restore to a local position
 - scp to remote position
+
+
+REFERENCES
+----------
+http://www.nongnu.org/rdiff-backup/
+http://wiki.rdiff-backup.org/wiki/index.php/BackupSomeDirectoriesOnly
+
+
