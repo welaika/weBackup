@@ -1,0 +1,11 @@
+rdiff-backup BASH script is a little script I wrote to perform backup operation easily.
+
+== Host / Destination configuration
+The script is developed to be used with a single "Backuper" host that pull data from several servers.
+
+== Backup & Restore
+Actually only backup function is implemented.
+
+Restore is a little bit more difficult: in my case the "backuper" is in a LAN, and cannot be accessed directly. In this case the operation ( reported from rdiff-backup mailing list ) consist in several steps: 
+- restore to a local position
+- scp to remote position
