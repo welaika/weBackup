@@ -53,6 +53,7 @@ function backup() {
 		if [ ! $DEBUG -eq 1 ]; then
 			dest_dir $host
 		else
+		  echo 'SONO IN DEBUG!'
 		  if ${servconf[0]}; then #if remote
 			  log ">> rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host}"
 			  log ""
