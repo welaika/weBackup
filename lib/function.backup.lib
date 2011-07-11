@@ -23,7 +23,7 @@ function backup() {
 		log "Hosts:"
 		for host in `ls $CONF_DIR`
 		do
-		  [[ test_conf_dir $host ]] || continue
+		  [[ `test_conf_dir $host` ]] || continue
 			log "> $host"
 		done
 		log ""
@@ -84,7 +84,6 @@ function backup() {
 				  rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
 				  log ""
 			  else
-			    #what to do if local
 			    rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
 				  rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
 			fi
@@ -93,7 +92,6 @@ function backup() {
 		if $mounted; then
 		  `which fusermount` -u ${servconf[2]}
 	  fi
-				
 		log "" #???
 	done
 	
