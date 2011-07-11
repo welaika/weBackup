@@ -31,7 +31,7 @@ function backup() {
 		echo -n "Startin backup"
 		backup_delay $DELAY 1
 	else
-		backup_delay $DELAY 0
+		backup_delay $DELAY 10
 	fi
 
 	for host in `ls $CONF_DIR`
