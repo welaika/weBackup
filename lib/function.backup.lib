@@ -23,7 +23,7 @@ function backup() {
 		log "Hosts:"
 		for host in `ls $CONF_DIR`
 		do
-		  [[ $host == 'template.tpl'] && continue; #ignore the template file plz
+		  [[ $host == 'template.tpl'] && continue #ignore the template file plz
 		  test_conf_dir $host
 			log "> $host"
 		done
@@ -37,7 +37,7 @@ function backup() {
 
 	for host in `ls $CONF_DIR`
 	do
-	  [[ $host == 'template.tpl'] && continue; #ignore the template file plz
+	  [[ $host == 'template.tpl'] && continue #ignore the template file plz
 	  test_conf_dir $host
 	  . ${CONF_DIR}/${host}/host.conf
 	  
