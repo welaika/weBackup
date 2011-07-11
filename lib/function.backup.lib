@@ -100,7 +100,7 @@ function backup() {
 # test_conf_dir ( host )
 # Test if the needed config files exist
 function test_conf_dir(){
-  if [ ! -f ${CONF_DIR}/$1/globbing.conf ] || [ ! -f ${CONF_DIR}/$1/host.conf]; then
+  if [ ! -f ${CONF_DIR}/$1/globbing.conf ] || [ ! -f ${CONF_DIR}/$1/host.conf ]; then
     log "> Missing configuration files for host ${1}. Aborting"
     exit 1
   fi
