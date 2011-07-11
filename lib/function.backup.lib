@@ -86,6 +86,7 @@ function backup() {
 			  else
 			    rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
 				  rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
+			  fi
 			fi
 		fi
 				
@@ -93,7 +94,7 @@ function backup() {
 		  `which fusermount` -u ${servconf[2]}
 	  fi
 		log "" #???
-	done;
+	done
 }
 
 # test_conf_dir ( host )
