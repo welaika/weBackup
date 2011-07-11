@@ -44,7 +44,7 @@ function backup() {
 	  if [ $host == 'template.tpl' ]; then
 	    continue
     fi
-    unset mounted #I want to be sure of it :)
+    mounted=false #I want to be sure of it at this point of the script:)
 	  test_conf_dir $host
 	  . ${CONF_DIR}/${host}/host.conf
 	  
@@ -87,7 +87,9 @@ function backup() {
 				log ""
 			#else if verbose AND local
 			elif [ $VERBOSE -eq 1 ] && ! ${servconf[0]}; then
-			  #what to do if local
+			  if ${servconf[3]}; then
+          mount_sshfs ${user}${host}::/ ${servconf[2]}
+        fi
 			  rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host} 2>&1 | tee -a $LOG
 				rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host} 2>&1 | tee -a $LOG
 		  else # else if NOT verbose
@@ -96,6 +98,9 @@ function backup() {
 				  rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
 				  log ""
 			  else #if local
+			    if ${servconf[3]}; then
+            mount_sshfs ${user}${host}::/ ${servconf[2]}
+          fi
 			    rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
 				  rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
 			  fi
@@ -104,7 +109,7 @@ function backup() {
 				
 		if $mounted; then
 		  `which fusermount` -u ${servconf[2]}
-		  unset mounted
+		  mounted=false
 	  fi
 		log "" #???
 	done
