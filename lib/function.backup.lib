@@ -23,7 +23,7 @@ function backup() {
 		log "Hosts:"
 		for host in `ls $CONF_DIR`
 		do
-		  [[ "test_conf_dir $host" ]] || continue
+		  test_conf_dir $host
 			log "> $host"
 		done
 		log ""
@@ -36,7 +36,7 @@ function backup() {
 
 	for host in `ls $CONF_DIR`
 	do
-	  [[ test_conf_dir $host ]] || continue
+	  test_conf_dir $host
 	  . ${CONF_DIR}/${host}/host.conf
 	  
 	  if ${servconf[0]}; then #if remote
