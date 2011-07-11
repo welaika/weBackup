@@ -23,7 +23,7 @@ function backup() {
 		log "Hosts:"
 		for host in `ls $CONF_DIR`
 		do
-		  [[ `test_conf_dir $host` ]] || continue
+		  [[ "test_conf_dir $host" ]] || continue
 			log "> $host"
 		done
 		log ""
