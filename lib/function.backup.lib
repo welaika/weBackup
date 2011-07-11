@@ -1,4 +1,4 @@
-
+#!/bin/bash
 #	Backup function library for Backup Script 
 #
 #	Version: 0.5
@@ -54,9 +54,11 @@ function backup() {
 		if [ ! $DEBUG -eq 1 ]; then
 			if [ $VERBOSE -eq 1 ]; then
 				rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host} --exclude / root@${host}::/ ${BACKUP_DIR}/${host} 2>&1 | tee -a $LOG
+				rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host} 2>&1 | tee -a $LOG
 				echo "" | tee -a $LOG
 			else
 				rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --include-globbing-filelist ${CONF_DIR}/${host} --exclude / root@${host}::/ ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
+				rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
 				echo "" >> $LOG
 			fi
 		fi
@@ -95,6 +97,7 @@ function dest_dir() {
 }
 
 # delay ( int time, bool stdout )
+
 function backup_delay() {
 	local delay_time=$1
 	local stdout=$2
