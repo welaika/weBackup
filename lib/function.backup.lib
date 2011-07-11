@@ -93,8 +93,7 @@ function backup() {
 		  `which fusermount` -u ${servconf[2]}
 	  fi
 		log "" #???
-	done
-	
+	done;
 }
 
 # test_conf_dir ( host )
