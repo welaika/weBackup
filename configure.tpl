@@ -8,6 +8,24 @@
 	MAIL_ADDR=( "" )
 	MAIL_SUBJ=''
 
+# Activate retention time
+#   You can decide whether or not to delete incremets older than
+#+  $RETENTION time (see below). If you won't activate this pay attention
+#+  to the disk space that will be getting bigger.
+#   Set this variable to TRUE to activate or leave it blank switch off deletion.
+#   Ex: DELETEOLDER=""
+
+  DELETEOLDER="TRUE"
+
+# Retention Time
+#  You can set the retention time, above which rdiff-backup increments
+#+ will not be conserved. The format of this variable MUST be as stated 
+#+ in rdiff-backup manual e.g.: 2D means  two days, 2W means two weeks ecc.
+
+#N.B.: at the moment is not possible to disable deletion of increments older
+#+ than $RETENTION...consider it a ToDo
+
+	RETENTION="2W"
 
 # EDIT ONLY IF YOU KNOW WAHT YOU ARE DOIING ---------------------------
 

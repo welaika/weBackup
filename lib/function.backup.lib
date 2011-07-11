@@ -15,17 +15,18 @@ function backup() {
 	fi
 
 	if [ $VERBOSE -eq 1 ]; then
-		echo -e "Backup local disk: "$BACKUP_DIR | tee -a $LOG
-		echo -e "Backup local conf: "$CONF_DIR | tee -a $LOG
-		echo -e "Log file         : "$LOG | tee -a $LOG
-		echo ""
+	  log "Backup local disk: $BACKUP_DIR" 1
+		log "Backup local conf: $CONF_DIR" 1
+		log "Log file         : $LOG" 1
+		echo "" #???
 	
-		echo "Hosts:" | tee -a $LOG
+		log "Hosts:"
 		for host in `ls $CONF_DIR`
 		do
-			echo "> "$host | tee -a $LOG
+		  [[ test_conf_dir $host ]] || continue
+			log "> $host"
 		done
-		echo "" | tee -a $LOG
+		log ""
 		
 		echo -n "Startin backup"
 		backup_delay $DELAY 1
@@ -35,42 +36,85 @@ function backup() {
 
 	for host in `ls $CONF_DIR`
 	do
+	  [[ test_conf_dir $host ]] || continue
+	  . ${CONF_DIR}/${host}/host.conf
+	  
+	  if ${servconf[0]}; then #if remote
+  	  user="${servconf[1]}@"
+	  else
+	    user=""
+    fi
+	  
 		if [ $VERBOSE -eq 1 ]; then
-			echo "Inizio Backup per: "$host | tee -a $LOG
-			echo "" | tee -a $LOG
+			log "Inizio Backup per: $host\n" 1
+			log ""
 		fi
 		
 		if [ ! $DEBUG -eq 1 ]; then
 			dest_dir $host
-		fi
-
-		if [ $DEBUG -eq 1 ]; then
-			echo ">> rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist "$CONF_DIR"/"$host" --exclude / root@"$host"::/" $BACKUP_DIR"/"$host | tee -a $LOG
-			echo "" | tee -a $LOG
-			rdiff-backup --test-server root@${host}::/ | tee -a $LOG
-			echo "" | tee -a $LOG 
+		else
+		  if ${servconf[0]}; then #if remote
+			  log ">> rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host}"
+			  log ""
+			  rdiff-backup --test-server ${user}${host}::/ | tee -a $LOG
+			  log ""
+		  else #if local
+		    #what to do if local
+		    log "rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host}"
+		    log ""
+		    rdiff-backup --test-server ${servconf[2]} | tee -a $LOG
+		    log ""
+	    fi
 		fi
 		
 		if [ ! $DEBUG -eq 1 ]; then
-			if [ $VERBOSE -eq 1 ]; then
-				rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host} --exclude / root@${host}::/ ${BACKUP_DIR}/${host} 2>&1 | tee -a $LOG
+		  #If verbose AND remote
+			if [ $VERBOSE -eq 1 ] && ${servconf[0]}; then
+				rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host} 2>&1 | tee -a $LOG
 				rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host} 2>&1 | tee -a $LOG
-				echo "" | tee -a $LOG
-			else
-				rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --include-globbing-filelist ${CONF_DIR}/${host} --exclude / root@${host}::/ ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
-				rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
-				echo "" >> $LOG
+				log ""
+			#else if is verbose AND local
+			elif [ $VERBOSE -eq 1 ] && [[ ${servconf[0]} == "false" ]]; then
+			  #what to do if local
+			  rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host} 2>&1 | tee -a $LOG
+				rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host} 2>&1 | tee -a $LOG
+			else # $DEBUG -eq 1
+			  if ${servconf[0]}; then
+				  rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
+				  rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
+				  log ""
+			  else
+			    #what to do if local
+			    rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
+				  rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
 			fi
 		fi
 				
-		echo "" | tee -a $LOG
+		if $mounted; then
+		  `which fusermount` -u ${servconf[2]}
+	  fi
+				
+		log "" #???
 	done
 	
 }
 
+# test_conf_dir ( host )
+# Test if the needed config files exist
+function test_conf_dir(){
+  if [ ! -f ${CONF_DIR}/$1/globbing.conf ] || [ ! -f ${CONF_DIR}/$1/host.conf]; then
+    log "> Missing configuration files for host ${1}. Aborting"
+    exit 1
+  fi
+  
+  return 0
+}
+
 # dest_dir ( string name )
+# Test if backup destination directory exists and if not
+#+create it.
 function dest_dir() {
-	local dir=$BACKUP_DIR"/"$1
+	local dir=${BACKUP_DIR}/${1}
 	
 	if [ -d $dir ]; then
 		if [ $VERBOSE -eq 1 ]; then
@@ -97,7 +141,6 @@ function dest_dir() {
 }
 
 # delay ( int time, bool stdout )
-
 function backup_delay() {
 	local delay_time=$1
 	local stdout=$2
@@ -114,3 +157,39 @@ function backup_delay() {
 		echo -e "\n"
 	fi
 }
+
+# log( text_string, 1 )
+#+ se passato il secondo argomento, allora attiva l'escape dei backspaces sull'echo
+function log(){
+ [[ $2 ]] && stampa="echo -e" || stampa="echo"
+  $stampa "$1" | tee -a $LOG
+}
+
+# mount_sshfs ( user@host:dir mountpoint )
+# This function will be valid only inside backup() function
+#+due to use of certain variables setted there...
+function mount_sshfs(){
+  if ${servconf[0]}; then
+    if ${servconf[3]}; then
+      [[ `which sshfs` ]] || log "ERROR: sshfs is not installed on the system. Aborting..."; exit 1
+      [[ ! -d ${servconf[2]} ]] && mkdir ${servconf[2]}
+      `which sshfs` ${user}${host}:/ ${servconf[2]}
+      
+      if [[ $? == 0 ]]; then
+        log "ERROR: mount of the remote filesystem went bad; problem probably genereted remotly. Aborting"
+        exit 1
+      fi
+      mountpoint ${servconf[2]}
+      if [[ $? != 0 ]]; then
+        log "ERROR: mount of the remote filesystem went bad; problem probably genereted remotly. Aborting"
+        exit 1
+      else
+        #At the end of the backup process we'll need a quick way to verify is the dir is alredy
+        #+mounted to unmount it before process another host/dir
+        mounted=true
+      fi
+      return 0
+    fi
+  fi
+}
+
