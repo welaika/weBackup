@@ -44,6 +44,7 @@ function backup() {
 	  if [ $host == 'template.tpl' ]; then
 	    continue
     fi
+    unset mounted #I want to be sure of it :)
 	  test_conf_dir $host
 	  . ${CONF_DIR}/${host}/host.conf
 	  
@@ -67,7 +68,9 @@ function backup() {
 			  rdiff-backup --test-server ${user}${host}::/ | tee -a $LOG
 			  log ""
 		  else #if local
-		    #what to do if local
+        if ${servconf[3]}; then
+          mount_sshfs ${user}${host}::/ ${servconf[2]}
+        fi
 		    log "rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host}"
 		    log ""
 		    rdiff-backup --test-server ${servconf[2]} | tee -a $LOG
@@ -101,6 +104,7 @@ function backup() {
 				
 		if $mounted; then
 		  `which fusermount` -u ${servconf[2]}
+		  unset mounted
 	  fi
 		log "" #???
 	done
