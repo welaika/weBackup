@@ -5,3 +5,5 @@
 #+check the presence of the $backup_dir (source it from configure)
 #   if not create it
 #   if unset/null warn the user
+
+

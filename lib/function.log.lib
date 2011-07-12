@@ -13,6 +13,8 @@ function create_log() {
 	 echo $LOG
 }
 
+# logdate ( no args )
+# Prints the log lines prefix with [TAG] [date-hour] "
 function logdate(){
   today=$(date +%F) #giorno
   ora=$(date +%H:%M) #data
@@ -21,22 +23,43 @@ function logdate(){
   return "$logtag [$today-$ora] "
 }
 
+# test_logrotate( no args )
+# Test if logrotate is installed or warn the user. If installed but not configured
+#+then it print the configuration in the right place...
 function test_logrotate(){
   [[ `which logrotate` ]] || echo -e "WARN: logrotate not installed in your system. Please try \"apt-get install logrotate\" to activate log rotation\n"; return 1
   if [ ! -f "/etc/logrotate.d/weBackup" ]; then
-  echo -e "WARN: logrotate configuration not present. We are creating it at /etc/logrotate.d/weBackup\n"
-    cat <<EOT > /etc/logrotate.d/weBackup
-  ${log_dir}/*.log {
-	  weekly
-	  missingok
-	  rotate 10
-	  compress
-	  delaycompress
-	  notifempty
-	  create 640 root adm
-  }
+    if [ -d "/etc/logrotate.d" ]; then  
+      echo -e "WARN: logrotate configuration not present. We are creating it at /etc/logrotate.d/weBackup\n"
+        cat <<EOT > /etc/logrotate.d/weBackup
+      ${log_dir}/*.log {
+	      weekly
+	      missingok
+	      rotate 10
+	      compress
+	      delaycompress
+	      notifempty
+	      create 640 root adm
+      }
 EOT
-
+    else
+      echo -e "WARN: we cannot find the logrotate conf dir in the usual path. Please, make yourself a logrotate config file with these parameters:\n"
+      cat <<EOT
+      ${log_dir}/*.log {
+	      weekly
+	      missingok
+	      rotate 10
+	      compress
+	      delaycompress
+	      notifempty
+	      create 640 root adm
+      }
+EOT
+    return 1
+    
+    fi
+  fi
+  
   return 0
 }
 
