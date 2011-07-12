@@ -3,42 +3,47 @@
 #
 #	Version: 0.4
 
-# create_log ( string dir, string extension, string prefix, string suffix )
+# create_log ( string dir )
 function create_log() {
 	local log_dir=$1
-	local log_extension=$2
-	local log_prefix=$3
-	local log_suffix=$4
-	
-	local log_sd=$log_dir"/"$(date '+%Y')
-	local log_ssd=$log_sd"/"$(date '+%m')
-	local log_sssd=$log_ssd"/"$(date '+%d')
-	
-	local LOG=$log_sssd"/"$log_prefix$(date '+%H%M%S')$log_suffix$log_extension
-	
-	local i=0
-	
-	while [  $i -eq 0 ]; do
-		 if [ -d $log_dir ]; then
-			if [ -d $log_sd ]; then
-				if [ -d $log_ssd ]; then
-					if [ -d $log_sssd ]; then
-						echo $(date '+%d/%m/%Y')" - "$(date '+%H:%M:%S') > $LOG
-						local i=1
-					else
-						mkdir $log_sssd
-					fi
-				else
-					mkdir $log_ssd
-				fi
-			else
-				mkdir $log_sd
-			fi
-		 else
-			mkdir $log_dir
-		 fi
-	 done
-	 
+
+  local LOG=${log_dir}/weBackup.log
+  	
 	 # return log file name
 	 echo $LOG
 }
+
+function logdate(){
+  today=$(date +%F) #giorno
+  ora=$(date +%H:%M) #data
+  logtag="[weBackup]"
+  
+  return "$logtag [$today-$ora] "
+}
+
+function test_logrotate(){
+  [[ `which logrotate` ]] || echo -e "WARN: logrotate not installed in your system. Please try \"apt-get install logrotate\" to activate log rotation\n"; return 1
+  if [ ! -f "/etc/logrotate.d/weBackup" ]; then
+  echo -e "WARN: logrotate configuration not present. We are creating it at /etc/logrotate.d/weBackup\n"
+    cat <<EOT > /etc/logrotate.d/weBackup
+  ${log_dir}/*.log {
+	  weekly
+	  missingok
+	  rotate 10
+	  compress
+	  delaycompress
+	  notifempty
+	  create 640 root adm
+  }
+EOT
+
+  return 0
+}
+
+# log( text_string, 1 )
+# se passato il secondo argomento, allora attiva l'escape dei backspaces sull'echo
+function log(){
+ [[ $2 ]] && stampa="echo -e" || stampa="echo"
+  $stampa logdate $1 | tee -a $LOG
+}
+

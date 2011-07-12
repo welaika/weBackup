@@ -35,8 +35,4 @@
 
 # Log file info
 	LOG_MAIN_DIR="log"
-	LOG_EXTENSION=".log"
-	
-	# A separator must be present
-	#LOG_PREFIX=""
-	#LOG_SUFFIX=""
+

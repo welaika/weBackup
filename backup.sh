@@ -2,8 +2,7 @@
 
 #	TODO
 #+	script per restore ( da fare con molta cautela )
-#+	implementare log rotate
-#+	aggiungere df -h al log
+#+	implementare log rotate+++
 
 #
 ##	FUNCTION DECLARATION
@@ -50,6 +49,7 @@ function trap_exit_function() {
 
 # Handling function for command line arguments
 function exec_backup() {
+  test_logrotate
 	backup
 
 	if [ $VERBOSE -eq 1 ]; then
@@ -114,7 +114,7 @@ DEBUG=0
 VERBOSE=0
 MAIL=0
 
-LOG=$(create_log $WD"/"$LOG_MAIN_DIR "" "" $LOG_EXTENSION)
+LOG=$(create_log ${WD}/${LOG_MAIN_DIR} "" "" $LOG_EXTENSION)
 
 if [ $# -eq 0 ]; then
 	usage

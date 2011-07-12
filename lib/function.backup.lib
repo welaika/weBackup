@@ -4,6 +4,7 @@
 #	Version: 0.5
 
 # backup (  )
+# The main backup function. Tass!
 function backup() {
 	
 	if [[ ! $(ls -A $CONF_DIR) ]]; then
@@ -35,7 +36,7 @@ function backup() {
 		echo -n "Startin backup"
 		backup_delay $DELAY 1
 	else
-		backup_delay $DELAY 10
+		backup_delay $DELAY 0
 	fi
 
 	for host in `ls $CONF_DIR`
@@ -44,14 +45,14 @@ function backup() {
 	  if [ $host == 'template.tpl' ]; then
 	    continue
     fi
-    mounted=false #I want to be sure of it at this point of the script:)
+    mounted=false #I want to be sure of it at this point of the script :)
 	  test_conf_dir $host
 	  . ${CONF_DIR}/${host}/host.conf
 	  
 	  if ${servconf[0]}; then #if remote
-  	  user="${servconf[1]}@"
-	  else
-	    user=""
+  	  user="${servconf[1]}@" #set the proper username
+	  else #if local
+	    user="" #no username needed
     fi
 	  
 		if [ $VERBOSE -eq 1 ]; then
@@ -174,20 +175,13 @@ function backup_delay() {
 	fi
 }
 
-# log( text_string, 1 )
-#+ se passato il secondo argomento, allora attiva l'escape dei backspaces sull'echo
-function log(){
- [[ $2 ]] && stampa="echo -e" || stampa="echo"
-  $stampa "$1" | tee -a $LOG
-}
-
 # mount_sshfs ( user@host:dir mountpoint )
 # This function will be valid only inside backup() function
 #+due to use of certain variables setted there...
 function mount_sshfs(){
   if ${servconf[0]}; then
     if ${servconf[3]}; then
-      [[ `which sshfs` ]] || log "ERROR: sshfs is not installed on the system. Aborting..."; exit 1
+      [[ `which sshfs` ]] || log "ERROR: sshfs is not installed on the system. Aborting... \n try apt-get install sshfs" 1; exit 1
       [[ ! -d ${servconf[2]} ]] && mkdir ${servconf[2]}
       `which sshfs` ${user}${host}:/ ${servconf[2]}
       
@@ -195,7 +189,7 @@ function mount_sshfs(){
         log "ERROR: mount of the remote filesystem went bad; problem probably genereted remotly. Aborting"
         exit 1
       fi
-      mountpoint ${servconf[2]}
+      mountpoint ${servconf[2]} #double control of the mount is paranoic?
       if [[ $? != 0 ]]; then
         log "ERROR: mount of the remote filesystem went bad; problem probably genereted remotly. Aborting"
         exit 1
