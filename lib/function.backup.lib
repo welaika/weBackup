@@ -100,7 +100,7 @@ function backup() {
 				  log ""
 			  else #if local
 			    if ${servconf[3]}; then
-            mount_sshfs ${user}${host}::/ ${servconf[2]}
+            mount_sshfs ${user}${host}:${servconf[4]} ${servconf[2]}
           fi
 			    rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
 				  rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG

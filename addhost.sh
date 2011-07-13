@@ -56,7 +56,9 @@ if [[ $remote == 'n' ]]; then
   elif [[ $sshfs == 'sshfs' ]]; then
     getconf 3 true
     
-    echo -ne "Please, specify the name of the path where you want to mount the remote directort.\nStart with / and omit the trailing slash: "
+    echo -n "Please, specify the path of the directory to backup."
+    echo -n "Start with / and omit the trailing slash."
+    echo -n "ATTENTION! Please DOUBLE escape SLASHES or the script will FAIL! e.g.: \\\/mnt\\\/dir': "
     read path
     
     if [ $path -eq '' ]; then
@@ -74,6 +76,19 @@ if [[ $remote == 'n' ]]; then
       exit 1
     else
       getconf 1 $user
+    fi
+    
+    echo -ne "Do you want (or must) to mount only a specific directory of the remote server?"
+    echo -n "Please, specify the path of the directory"
+    echo -n "Start with / and omit the trailing slash."
+    echo -n "ATTENTION! Please DOUBLE escape SLASHES or the script will FAIL! e.g.: \\\/home\\\/user': "
+    read rpath
+    
+    if [ $rpath -eq '' ]; then
+      echo -e "Path was not an optional... Please restart the script now... >_>\n"
+      exit 1
+    else   
+      getconf 4 $rpath
     fi
       
   fi
