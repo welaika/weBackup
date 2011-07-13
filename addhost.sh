@@ -47,7 +47,7 @@ if [[ $remote == 'n' ]]; then
     if [[ "$path" == "" ]]; then
       echo -e "Path was not an optional... Please restart the script now... >_>\n"
       exit 1
-    elif   
+    else   
       getconf 2 $path
     fi
     
