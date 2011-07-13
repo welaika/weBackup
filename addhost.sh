@@ -22,7 +22,7 @@ cp -r $CONF_DIR/template.tpl ${CONF_DIR}/${host}
 
 # getconf ( string array_to_configure, string substitution )
 function getconf(){
-  sed -i "s/\[$1\]=/\[$1\]=$2/" $hostconfig
+  sed -i "s/^\[$1\]=$/\[$1\]=$2/" $hostconfig
   return 0
 }
 
@@ -44,7 +44,7 @@ if [[ $remote == 'n' ]]; then
     echo -ne "Please, specify the path of the directory to backup.\nStart with / and omit the trailing slash: "
     read path
     
-    [[ $path ]] || echo -e "Path was not an optional... Please restart the script now... >_>\n"; exit 1
+    [[ $path ]] && echo -e "Path was not an optional... Please restart the script now... >_>\n"; exit 1
    
     getconf 2 $path
   elif [[ $sshfs == 'sshfs' ]]; then
