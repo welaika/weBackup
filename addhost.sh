@@ -44,12 +44,13 @@ if [[ $remote == 'n' ]]; then
     echo -ne "Please, specify the path of the directory to backup.\nStart with / and omit the trailing slash: "
     read path
     
-    if [[ $path == "" ]]; then
+    if [[ "$path" == "" ]]; then
       echo -e "Path was not an optional... Please restart the script now... >_>\n"
       exit 1
+    elif   
+      getconf 2 $path
     fi
-   
-    getconf 2 $path
+    
   elif [[ $sshfs == 'sshfs' ]]; then
     getconf 3 true
     
