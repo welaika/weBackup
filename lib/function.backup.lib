@@ -182,7 +182,7 @@ function mount_sshfs(){
   if ${servconf[0]}; then
     if ${servconf[3]}; then
       [[ `which sshfs` ]] || log "ERROR: sshfs is not installed on the system. Aborting... \n try apt-get install sshfs" 1; exit 1
-      [[ ! -d ${servconf[2]} ]] && mkdir ${servconf[2]}
+      if [[ ! -d ${servconf[2]} ]]; then mkdir ${servconf[2]}; fi
       `which sshfs` ${user}${host}:${servconf[4]} ${servconf[2]}
       
       if [[ $? == 0 ]]; then
