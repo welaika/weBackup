@@ -183,7 +183,7 @@ function mount_sshfs(){
     if ${servconf[3]}; then
       #[[ `which sshfs` ]] || log "ERROR: sshfs is not installed on the system. Aborting... \n try apt-get install sshfs" 1; exit 1
       if [[ ! -d ${servconf[2]} ]]; then mkdir ${servconf[2]}; fi
-      `which sshfs` ${servconf[1]}${host}:${servconf[4]} ${servconf[2]}
+      `which sshfs` ${servconf[1]}@${host}:${servconf[4]} ${servconf[2]}
       
       if [[ $? == 0 ]]; then
         log "ERROR: mount of the remote filesystem went bad; problem probably genereted remotly. Aborting"
