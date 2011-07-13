@@ -44,7 +44,7 @@ if [[ $remote == 'n' ]]; then
     echo -ne "Please, specify the path of the directory to backup.\nStart with / and omit the trailing slash: "
     read path
     
-    if [[ "$path" == "" ]]; then
+    if [ $path -eq '' ]; then
       echo -e "Path was not an optional... Please restart the script now... >_>\n"
       exit 1
     else   
