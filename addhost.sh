@@ -41,7 +41,9 @@ if [[ $remote == 'n' ]]; then
   elif [[ $sshfs == 'local' ]]; then
     getconf 3 false
     
-    echo -ne "Please, specify the path of the directory to backup.\nStart with / and omit the trailing slash: "
+    echo -n "Please, specify the path of the directory to backup."
+    echo -n "Start with / and omit the trailing slash."
+    echo -n "ATTENTION! Please DOUBLE escape SLASHES or the script will FAIL! e.g.: \\\/mnt\\\/dir': "
     read path
     
     if [ $path -eq '' ]; then
@@ -82,5 +84,8 @@ elif [[ remote == 'y' ]]; then
   read user
   
   [[ $user ]] || echo -e "Username was not an optional... Please restart the script now... >_>\n"; exit 1
-  sed -i "s/\[1\]=/\[1\]=$user/" ${CONF_DIR}/${host}/host.conf
+  getconf 1 $user
 fi
+
+echo -e "All showld be done. Take a look in $hostconfig.\nDo not forget to ssh-copy-id if needed. ByeBye"
+
