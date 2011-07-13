@@ -185,7 +185,7 @@ function mount_sshfs(){
       if [[ ! -d ${servconf[2]} ]]; then mkdir ${servconf[2]}; fi
       `which sshfs` ${servconf[1]}@${host}:${servconf[4]} ${servconf[2]}
       
-      if [[ $? == 0 ]]; then
+      if [[ $? != 0 ]]; then
         log "ERROR: mount of the remote filesystem went bad; problem probably genereted remotly. Aborting"
         exit 1
       fi
