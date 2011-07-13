@@ -20,7 +20,7 @@ function logdate(){
   ora=$(date +%H:%M) #data
   logtag="[weBackup]"
   
-  echo "$logtag [$today-$ora] "
+  logdate="$logtag [$today-$ora] "
 }
 
 # test_logrotate( no args )
