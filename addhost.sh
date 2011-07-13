@@ -46,7 +46,7 @@ if [[ $remote == 'n' ]]; then
     echo -n "ATTENTION! Please DOUBLE escape SLASHES or the script will FAIL! e.g.: \\\/mnt\\\/dir': "
     read path
     
-    if [ $path -eq '' ]; then
+    if [ $path != '' ]; then
       echo -e "Path was not an optional... Please restart the script now... >_>\n"
       exit 1
     else   
@@ -61,7 +61,7 @@ if [[ $remote == 'n' ]]; then
     echo -n "ATTENTION! Please DOUBLE escape SLASHES or the script will FAIL! e.g.: \\\/mnt\\\/dir': "
     read path
     
-    if [ $path -eq '' ]; then
+    if [ $path != '' ]; then
       echo -e "Path was not an optional... Please restart the script now... >_>\n"
       exit 1
     else   
@@ -71,7 +71,7 @@ if [[ $remote == 'n' ]]; then
     echo -ne "What is the name of the user you want to use\nto mount to the remote dir using sshfs (your ssh user)? "
     read user
     
-    if [ $user -eq '' ]; then
+    if [ $user != '' ]; then
       echo -e "Username was not an optional... Please restart the script now... >_>\n"
       exit 1
     else
@@ -84,7 +84,7 @@ if [[ $remote == 'n' ]]; then
     echo -n "ATTENTION! Please DOUBLE escape SLASHES or the script will FAIL! e.g.: \\\/home\\\/user': "
     read rpath
     
-    if [ $rpath -eq '' ]; then
+    if [ $rpath != '' ]; then
       echo -e "Path was not an optional... Please restart the script now... >_>\n"
       exit 1
     else   
@@ -98,8 +98,12 @@ elif [[ remote == 'y' ]]; then
   echo -ne "What is the name of the user you want to use\nto connect to the remote host? "
   read user
   
-  [[ $user ]] || echo -e "Username was not an optional... Please restart the script now... >_>\n"; exit 1
-  getconf 1 $user
+  if [ $user != '' ]; then
+    echo -e "Username was not an optional... Please restart the script now... >_>\n"
+    exit 1
+  else
+    getconf 1 $user
+  fi
 fi
 
 echo -e "All showld be done. Take a look in $hostconfig.\nDo not forget to ssh-copy-id if needed. ByeBye"
