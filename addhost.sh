@@ -54,11 +54,15 @@ if [[ $remote == 'n' ]]; then
   elif [[ $sshfs == 'sshfs' ]]; then
     getconf 3 true
     
-    echo -ne "Please, specify the path where you want to mount the remote directort.\nStart with / and omit the trailing slash: "
+    echo -ne "Please, specify the name of the path where you want to mount the remote directort.\nStart with / and omit the trailing slash: "
     read path
     
-    [[ $path ]] || echo -e "Path was not an optional... Please restart the script now... >_>\n"; exit 1
-    getconf 2 $path
+    if [ $path -eq '' ]; then
+      echo -e "Path was not an optional... Please restart the script now... >_>\n"
+      exit 1
+    else   
+      getconf 2 $path
+    fi
     
     echo -ne "What is the name of the user you want to use\nto mount to the remote dir using sshfs (your ssh user)? "
     read user
