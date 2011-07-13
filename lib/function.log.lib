@@ -65,8 +65,8 @@ EOT
 
 # log( text_string, 1 )
 # se passato il secondo argomento, allora attiva l'escape dei backspaces sull'echo
-function log( $logdate ){
+function log(){
  [[ $2 ]] && stampa="echo -e" || stampa="echo"
-  $stampa logdate $1 | tee -a $LOG
+  $stampa $logdate $1 | tee -a $LOG
 }
 
