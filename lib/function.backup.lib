@@ -179,7 +179,7 @@ function backup_delay() {
 # This function will be valid only inside backup() function
 #+due to use of certain variables setted there...
 function mount_sshfs(){
-  if ${servconf[0]}; then
+  if ! ${servconf[0]}; then
     if ${servconf[3]}; then
       #[[ `which sshfs` ]] || log "ERROR: sshfs is not installed on the system. Aborting... \n try apt-get install sshfs" 1; exit 1
       if [[ ! -d ${servconf[2]} ]]; then mkdir ${servconf[2]}; fi
