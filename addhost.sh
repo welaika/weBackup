@@ -67,8 +67,12 @@ if [[ $remote == 'n' ]]; then
     echo -ne "What is the name of the user you want to use\nto mount to the remote dir using sshfs (your ssh user)? "
     read user
     
-    [[ $user ]] || echo -e "Username was not an optional... Please restart the script now... >_>\n"; exit 1
-    getconf 1 $user
+    if [ $user -eq '' ]; then
+      echo -e "Username was not an optional... Please restart the script now... >_>\n"
+      exit 1
+    else
+      getconf 1 $user
+    fi
       
   fi
   
