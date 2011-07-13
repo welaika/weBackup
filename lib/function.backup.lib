@@ -24,7 +24,7 @@ function backup() {
 		log "Hosts:"
 		for host in `ls $CONF_DIR`
 		do
-		  #ignore the template file plz
+		  #Prsing the various hosts, ignore the template file plz
 		  if [ $host == 'template.tpl' ]; then
 		    continue
 	    fi
@@ -41,18 +41,22 @@ function backup() {
 
 	for host in `ls $CONF_DIR`
 	do
-	  #ignore the template file plz
+	  #Prsing the various hosts, ignore the template file plz
 	  if [ $host == 'template.tpl' ]; then
 	    continue
     fi
-    mounted=false #I want to be sure of it at this point of the script :)
-	  test_conf_dir $host
-	  . ${CONF_DIR}/${host}/host.conf
+    # mounted=false #I want to be sure of it at this point of the script :)
+    #+commented out because put we on risk of remote dirs remained mounted
+    #+for some reasons...
+	  test_conf_dir $host #test if both per host conf files exists
+	  . ${CONF_DIR}/${host}/host.conf #then source one of them
 	  
 	  if ${servconf[0]}; then #if remote
   	  user="${servconf[1]}@" #set the proper username
 	  else #if local
 	    user="" #no username needed
+	    # For remotly mounted sshfs file systems we'll
+	    #+have an ad hoc username from host.conf
     fi
 	  
 		if [ $VERBOSE -eq 1 ]; then
@@ -60,6 +64,7 @@ function backup() {
 			log ""
 		fi
 		
+		##STARTS DEBUG ONLY TASKS
 		if [ ! $DEBUG -eq 1 ]; then
 			dest_dir $host
 		else
@@ -78,8 +83,9 @@ function backup() {
 		    log ""
 	    fi
 		fi
+		##END DEBUG ONLY TASKS
 		
-		#if NOT DEBUG
+		##START SERIUS BACKUP
 		if [ ! $DEBUG -eq 1 ]; then
 		  #If verbose AND remote
 			if [ $VERBOSE -eq 1 ] && ${servconf[0]}; then
@@ -88,28 +94,34 @@ function backup() {
 				log ""
 			#else if verbose AND local
 			elif [ $VERBOSE -eq 1 ] && ! ${servconf[0]}; then
+			  # If my dir is a sshfsmounted dir than handle mount
+			  #+operations with the proper function
 			  if ${servconf[3]}; then
-          mount_sshfs ${user}${host}:${servconf[4]} ${servconf[2]}
+          mount_sshfs #${user}${host}:${servconf[4]} ${servconf[2]}
+          #I think that after the lasts fixes we don't need anymore arguments to mount_sshfs
         fi
 			  rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host} 2>&1 | tee -a $LOG
 				rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host} 2>&1 | tee -a $LOG
-		  else # else if NOT verbose
+		  else # else if local but NOT verbose
 			  if ${servconf[0]}; then #if remote
 				  rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
 				  rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
 				  log ""
 			  else #if local
 			    if ${servconf[3]}; then
-            mount_sshfs ${user}${host}:${servconf[4]} ${servconf[2]}
+            mount_sshfs #${user}${host}:${servconf[4]} ${servconf[2]}
+          #I think that after the lasts fixes we don't need anymore arguments to mount_sshfs
           fi
 			    rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
 				  rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
 			  fi
 			fi
 		fi
-				
+		
+		# If we have $mounted true, so we have to unmount the dir
 		if $mounted; then
 		  `which fusermount` -u ${servconf[2]}
+		  # and set it to false
 		  mounted=false
 	  fi
 		log "" #???
@@ -194,8 +206,10 @@ function mount_sshfs(){
         log "ERROR: mount of the remote filesystem went bad; problem probably genereted remotly. Aborting"
         exit 1
       else
-        #At the end of the backup process we'll need a quick way to verify is the dir is alredy
-        #+mounted to unmount it before process another host/dir
+        # At the end of the backup process will be a pleasure to have a quick way to verify
+        #+if the dir is alredy mounted to unmount it before process another host/dir.
+        #+Only to minimize risks that someone could have access to the remote files from the backup server
+        #+and potentially put the word END on clients data... >_>
         mounted=true
       fi
       return 0

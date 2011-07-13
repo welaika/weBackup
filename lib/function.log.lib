@@ -6,15 +6,14 @@
 # create_log ( string dir )
 function create_log() {
 	local log_dir=$1
-
   local LOG=${log_dir}/weBackup.log
-  	
 	 # return log file name
+	 #  why echo and not return? I don't know at the moment...:S
 	 echo $LOG
 }
 
 # logdate ( no args )
-# Prints the log lines prefix with [TAG] [date-hour] "
+# Sets a variable to handle the log lines prefix with [TAG] [date-hour] "
 function logdate(){
   today=$(date +%F) #giorno
   ora=$(date +%H:%M) #data
@@ -67,6 +66,6 @@ EOT
 # se passato il secondo argomento, allora attiva l'escape dei backspaces sull'echo
 function log(){
  [[ $2 ]] && stampa="echo -e" || stampa="echo"
-  $stampa $logdate $1 | tee -a $LOG
+  $stampa "$logdate $1" | tee -a $LOG
 }
 
