@@ -89,7 +89,7 @@ function backup() {
 			#else if verbose AND local
 			elif [ $VERBOSE -eq 1 ] && ! ${servconf[0]}; then
 			  if ${servconf[3]}; then
-          mount_sshfs ${user}${host}::/ ${servconf[2]}
+          mount_sshfs ${user}${host}::${servconf[4]} ${servconf[2]}
         fi
 			  rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host} 2>&1 | tee -a $LOG
 				rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host} 2>&1 | tee -a $LOG
