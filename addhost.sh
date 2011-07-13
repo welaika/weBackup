@@ -23,6 +23,7 @@ cp -r $CONF_DIR/template.tpl ${CONF_DIR}/${host}
 # getconf ( string array_to_configure, string substitution )
 function getconf(){
   sed -i "s/\[$1\]=/\[$1\]=$2/" $hostconfig
+  return 0
 }
 
 echo -ne "Is the host a remote host with rdiff-backup installed? [y] [n]: "
@@ -33,8 +34,11 @@ if [[ $remote == 'n' ]]; then
   echo -ne "Ok, we have to backup a local directory or a remote one\nmounted locally with sshfs? [local] [sshfs]: "
   read sshfs
   
-  [[ $sshfs == "" || $sshfs != 'local' || $sshfs != 'sshfs' ]] || echo -e "That was not an optional to follow instructions... Please restart the script now... >_>\n"; exit 1
-  if [[ $sshfs == 'local' ]]; then
+  if [[ $sshfs == "" ]]; then
+    
+    echo -e "That was not an optional to follow instructions... Please restart the script now... >_>\n"; exit 1
+  
+  elif [[ $sshfs == 'local' ]]; then
     getconf 3 false
     
     echo -ne "Please, specify the path of the directory to backup.\nStart with / and omit the trailing slash: "
