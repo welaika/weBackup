@@ -85,7 +85,7 @@ function backup() {
       # Deletion of temporary logs is a task of send_mail, but if we are in debug mode
       #+and we don't force mail sending with -m flag it won't be invoked. So we solve
       #+brutaly the problem with these two fucking awful lines
-      cat $LOG >> `echo $LOGarc`
+      cat $LOG >> ${WD}/${LOG_MAIN_DIR}/weBackup.log
 	    rm -f $LOG
 		fi
 		##END DEBUG ONLY TASKS
