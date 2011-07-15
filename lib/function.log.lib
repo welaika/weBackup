@@ -6,7 +6,6 @@
 function create_log() {
 	local log_dir=$1
   local LOG=${log_dir}/weBackup.log.tmp
-  LOGarc=${log_dir}/weBackup.log
 	 # return log file name
 	 #  why echo and not return? I don't know at the moment...:S
 	 echo $LOG
@@ -78,6 +77,7 @@ function send_mail() {
 	do
 		mail -s $MAIL_SUBJ $mail < ${LOG}
 	done
+	local LOGarc=${log_dir}/weBackup.log
 	cat $LOG >> `echo $LOGarc`
 	rm -f $LOG
 }
