@@ -5,7 +5,8 @@
 # create_log ( string dir )
 function create_log() {
 	local log_dir=$1
-  local LOG=${log_dir}/weBackup.log
+  local LOG=${log_dir}/weBackup.log.tmp
+  LOGarc=${log_dir}/weBackup.log
 	 # return log file name
 	 #  why echo and not return? I don't know at the moment...:S
 	 echo $LOG
@@ -25,10 +26,10 @@ function logdate(){
 # Test if logrotate is installed or warn the user. If installed but not configured
 #+then it print the configuration in the right place...
 function test_logrotate(){
-  [[ `which logrotate` ]] || echo -e "WARN: logrotate not installed in your system. Please try \"apt-get install logrotate\" to activate log rotation\n"; return 1
+  [[ `which logrotate` ]] || log "WARN: logrotate not installed in your system. Please try \"apt-get install logrotate\" to activate log rotation\n" 1 1; return 1
   if [ ! -f "/etc/logrotate.d/weBackup" ]; then
     if [ -d "/etc/logrotate.d" ]; then  
-      echo -e "WARN: logrotate configuration not present. We are creating it at /etc/logrotate.d/weBackup\n"
+      log "WARN: logrotate configuration not present. We are creating it at /etc/logrotate.d/weBackup\n" 1 1
         cat <<EOT > /etc/logrotate.d/weBackup
       ${log_dir}/*.log {
 	      weekly
@@ -71,3 +72,12 @@ function log(){
   [[ $3 ]] && logdate; $stampa $1;
 }
 
+# sendmail (  )
+function send_mail() {
+	for mail in $MAIL_ADDR
+	do
+		mail -s $MAIL_SUBJ $mail < ${LOG}
+	done
+	cat $LOG >> $LOGarc
+	rm -f $LOG
+}
