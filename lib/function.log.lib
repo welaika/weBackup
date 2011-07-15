@@ -16,7 +16,7 @@ function create_log() {
 # Sets a variable to handle the log lines prefix with [TAG] [date-hour] "
 function logdate(){
   today=$(date +%F) #giorno
-  ora=$(date +%H:%M) #data
+  ora=$(date +%H:%M:%S) #data
   logtag="[weBackup]"
   
   echo -n "$logtag [$today-$ora] "
@@ -78,6 +78,6 @@ function send_mail() {
 	do
 		mail -s $MAIL_SUBJ $mail < ${LOG}
 	done
-	cat $LOG >> $LOGarc
+	cat $LOG >> `echo $LOGarc`
 	rm -f $LOG
 }
