@@ -117,6 +117,7 @@ function backup() {
 		# If we have $mounted true, so we have to unmount the dir
 		if $mounted; then
 		  `which fusermount` -u ${servconf[2]}
+		  log "Unmounted ${servconf[2]}" "" 1
 		  # and set it to false
 		  mounted=false
 	  fi
