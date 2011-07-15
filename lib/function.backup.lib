@@ -19,12 +19,12 @@ function backup() {
 	  log "Backup local disk: $BACKUP_DIR" 1
 		log "Backup local conf: $CONF_DIR" 1
 		log "Log file         : $LOG" 1
-		echo "" #???
+		echo ""
 	
 		log "Hosts:"
 		for host in `ls $CONF_DIR`
 		do
-		  #Prsing the various hosts, ignore the template file plz
+		  #Parsing the various hosts, ignore the template file plz
 		  if [ $host == 'template.tpl' ]; then
 		    continue
 	    fi
@@ -97,8 +97,7 @@ function backup() {
 			  # If my dir is a sshfsmounted dir than handle mount
 			  #+operations with the proper function
 			  if ${servconf[3]}; then
-          mount_sshfs #${user}${host}:${servconf[4]} ${servconf[2]}
-          #I think that after the lasts fixes we don't need anymore arguments to mount_sshfs
+          mount_sshfs
         fi
 			  rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host} 2>&1 | tee -a $LOG
 				rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host} 2>&1 | tee -a $LOG
@@ -109,8 +108,7 @@ function backup() {
 				  log ""
 			  else #if local
 			    if ${servconf[3]}; then
-            mount_sshfs #${user}${host}:${servconf[4]} ${servconf[2]}
-          #I think that after the lasts fixes we don't need anymore arguments to mount_sshfs
+            mount_sshfs
           fi
 			    rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
 				  rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
@@ -124,7 +122,7 @@ function backup() {
 		  # and set it to false
 		  mounted=false
 	  fi
-		log "" #???
+		log ""
 	done
 }
 

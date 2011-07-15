@@ -1,4 +1,3 @@
-
 #	Log function library for Backup Script
 #
 #	Version: 0.4
@@ -19,7 +18,7 @@ function logdate(){
   ora=$(date +%H:%M) #data
   logtag="[weBackup]"
   
-  logdate="$logtag [$today-$ora] "
+  echo -n "$logtag [$today-$ora] "
 }
 
 # test_logrotate( no args )
@@ -65,7 +64,8 @@ EOT
 # log( text_string, 1 )
 # se passato il secondo argomento, allora attiva l'escape dei backspaces sull'echo
 function log(){
- [[ $2 ]] && stampa="echo -e" || stampa="echo"
-  $stampa "$logdate $1" | tee -a $LOG
+  [[ $2 ]] && stampa="echo -e" || stampa="echo"
+  logdate >> $LOG
+  $stampa $1 >> $LOG
 }
 
