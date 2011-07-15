@@ -118,8 +118,8 @@ function backup() {
 		if $mounted; then
 		  `which fusermount` -u ${servconf[2]}
 		  log "Unmounted ${servconf[2]}" "" 1
-		  # and set it to false
-		  mounted=false
+		  # and unset it
+		  unset mounted
 	  fi
 	done
 }
