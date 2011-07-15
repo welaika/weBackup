@@ -80,7 +80,7 @@ function send_mail() {
 	do
 		mail -s $MAIL_SUBJ $mail < ${LOG}
 	done
-	local LOGarc=${log_dir}/weBackup.log
-	cat $LOG >> `echo $LOGarc`
+	local LOGarc="${WD}/${LOG_MAIN_DIR}/weBackup.log"
+	cat $LOG >> $LOGarc
 	rm -f $LOG
 }
