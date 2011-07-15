@@ -66,14 +66,16 @@ function backup() {
 			dest_dir $host
 		else
 		  if ${servconf[0]}; then #if remote
+		    log "TESTING $host" "" 1
 			  log "rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host}" "" 1
-			  log "$(rdiff-backup --test-server ${user}${host}::/)" "" 1
+			  log "$(rdiff-backup --test-server ${user}${host}::/)\r\n\r\n" 1 1
 		  else #if local
         if ${servconf[3]}; then
           mount_sshfs ${user}${host}::/ ${servconf[2]}
         fi
+        log "TESTING $host" "" 1
 		    log "rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host}"
-		    log "$(rdiff-backup --test-server ${servconf[2]})" "" 1
+		    log "$(rdiff-backup --test-server ${servconf[2]})\r\n\r\n" 1 1
 	    fi
 		fi
 		##END DEBUG ONLY TASKS
