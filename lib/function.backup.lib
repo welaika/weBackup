@@ -48,6 +48,9 @@ function backup() {
     #+for some reasons...
 	  test_conf_dir $host #test if both per host conf files exists
 	  . ${CONF_DIR}/${host}/host.conf #then source one of them
+	  if [ $DEBUG -eq 1 ]; then
+  	  log "Using $host configuration" "" 1
+	  fi
 	  
 	  if ${servconf[0]}; then #if remote
   	  user="${servconf[1]}@" #set the proper username
