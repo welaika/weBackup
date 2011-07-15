@@ -16,10 +16,9 @@ function backup() {
 	fi
 
 	if [ $VERBOSE -eq 1 ]; then
-	  log "Backup local disk: $BACKUP_DIR" 1
-		log "Backup local conf: $CONF_DIR" 1
-		log "Log file         : $LOG" 1
-		echo ""
+	  log "Backup local disk: $BACKUP_DIR" 1 1
+		log "Backup local conf: $CONF_DIR" 1 1
+		log "Log file         : $LOG" 1 1
 	
 		log "Hosts:"
 		for host in `ls $CONF_DIR`
@@ -29,9 +28,8 @@ function backup() {
 		    continue
 	    fi
 		  test_conf_dir $host
-			log "> $host"
+			log "$host" "" 1
 		done
-		log ""
 		
 		echo -n "Startin backup"
 		backup_delay $DELAY 1
@@ -60,8 +58,7 @@ function backup() {
     fi
 	  
 		if [ $VERBOSE -eq 1 ]; then
-			log "Inizio Backup per: $host\n" 1
-			log ""
+			log "Inizio Backup per: $host\n" 1 1
 		fi
 		
 		##STARTS DEBUG ONLY TASKS
@@ -69,18 +66,14 @@ function backup() {
 			dest_dir $host
 		else
 		  if ${servconf[0]}; then #if remote
-			  log ">> rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host}"
-			  log ""
-			  rdiff-backup --test-server ${user}${host}::/ | tee -a $LOG
-			  log ""
+			  log "rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host}" "" 1
+			  log "$(rdiff-backup --test-server ${user}${host}::/)" "" 1
 		  else #if local
         if ${servconf[3]}; then
           mount_sshfs ${user}${host}::/ ${servconf[2]}
         fi
 		    log "rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host}"
-		    log ""
-		    rdiff-backup --test-server ${servconf[2]} | tee -a $LOG
-		    log ""
+		    log "$(rdiff-backup --test-server ${servconf[2]})" "" 1
 	    fi
 		fi
 		##END DEBUG ONLY TASKS
@@ -89,9 +82,8 @@ function backup() {
 		if [ ! $DEBUG -eq 1 ]; then
 		  #If verbose AND remote
 			if [ $VERBOSE -eq 1 ] && ${servconf[0]}; then
-				rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host} 2>&1 | tee -a $LOG
-				rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host} 2>&1 | tee -a $LOG
-				log ""
+				log "$(rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host})" "" 1
+				log "$(rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host})" "" 1
 			#else if verbose AND local
 			elif [ $VERBOSE -eq 1 ] && ! ${servconf[0]}; then
 			  # If my dir is a sshfsmounted dir than handle mount
@@ -99,19 +91,18 @@ function backup() {
 			  if ${servconf[3]}; then
           mount_sshfs
         fi
-			  rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host} 2>&1 | tee -a $LOG
-				rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host} 2>&1 | tee -a $LOG
+			  log "$(rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host})"
+				log "$(rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host})"
 		  else # else if local but NOT verbose
 			  if ${servconf[0]}; then #if remote
-				  rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
-				  rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
-				  log ""
+				  log "$(rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host})"
+				  log "$(rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host})"
 			  else #if local
 			    if ${servconf[3]}; then
             mount_sshfs
           fi
-			    rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
-				  rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
+			    log "$(rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host})"
+				  log "$(rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host})"
 			  fi
 			fi
 		fi
@@ -122,7 +113,6 @@ function backup() {
 		  # and set it to false
 		  mounted=false
 	  fi
-		log ""
 	done
 }
 
@@ -130,7 +120,7 @@ function backup() {
 # Test if the needed config files exist
 function test_conf_dir(){
   if [ ! -f ${CONF_DIR}/$1/globbing.conf ] || [ ! -f ${CONF_DIR}/$1/host.conf ]; then
-    log "> Missing configuration files for host ${1}. Aborting"
+    log "Missing configuration files for host ${1}. Aborting"
     exit 1
   fi
   
