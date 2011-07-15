@@ -81,7 +81,7 @@ function send_mail() {
 		mail -s $MAIL_SUBJ $mail < ${LOG}
 	done
 	local LOGarc="${WD}/${LOG_MAIN_DIR}/weBackup.log"
-	log "'>>>>>>>>>>>>>>>>>>>>>>>>>>>>'  `echo $LOGarc`  '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'" "" 1
+	echo $LOGarc'<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
 	cat $LOG >> `echo $LOGarc`
 	rm -f $LOG
 }
