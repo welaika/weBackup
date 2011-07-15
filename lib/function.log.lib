@@ -25,7 +25,10 @@ function logdate(){
 # Test if logrotate is installed or warn the user. If installed but not configured
 #+then it print the configuration in the right place...
 function test_logrotate(){
-  [[ `which logrotate` ]] && log "WARN: logrotate not installed in your system. Please try \"apt-get install logrotate\" to activate log rotation\n" 1 1; return 1
+  if [[ ! `which logrotate` ]]; then
+    log "WARN: logrotate not installed in your system. Please try \"apt-get install logrotate\" to activate log rotation\n" 1 1;
+    return 1
+  fi
   if [ ! -f "/etc/logrotate.d/weBackup" ]; then
     if [ -d "/etc/logrotate.d" ]; then  
       log "WARN: logrotate configuration not present. We are creating it at /etc/logrotate.d/weBackup\n" 1 1
