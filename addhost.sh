@@ -14,7 +14,7 @@ elif [[ $go == 'n' ]]; then
   echo -e "Mmmm, ok...see you"; exit 0
 fi
 
-echo -ne "What is the name of the host to add? If it is a remote site USE its DOMAIN NAME: "
+echo -ne "What is the name of the host to add? If it\nis a remote site USE its DOMAIN NAME: "
 read host
 
 hostconfig=${CONF_DIR}/${host}/host.conf
@@ -31,19 +31,15 @@ read remote
 
 if [[ $remote == 'n' ]]; then
   getconf 0 false
-  echo -ne "Ok, we have to backup a local directory or a remote one\nmounted locally with sshfs? [local] [sshfs]: "
+  echo -ne "Ok, we have to backup a local directory or a\nremote one mounted locally with sshfs? [local] [sshfs]: "
   read sshfs
   
-  if [[ $sshfs == "" ]]; then
-    
-    echo -e "That was not an optional to follow instructions... Please restart the script now... >_>\n"; exit 1
-  
-  elif [[ $sshfs == 'local' ]]; then
+  if [[ $sshfs == 'local' ]]; then
     getconf 3 false
     
     echo -n "Please, specify the path of the directory to backup."
     echo -n "Start with / and omit the trailing slash."
-    echo -n "ATTENTION! Please DOUBLE escape SLASHES or the script will FAIL! e.g.: \\\/mnt\\\/dir': "
+    echo -n "ATTENTION! Please DOUBLE escape SLASHES or\nthe script will FAIL! e.g.: \\\/mnt\\\/dir': "
     read path
     
     if [ $path == '' ]; then
@@ -58,7 +54,7 @@ if [[ $remote == 'n' ]]; then
     
     echo -n "Please, specify the path of the directory to backup."
     echo -n "Start with / and omit the trailing slash."
-    echo -n "ATTENTION! Please DOUBLE escape SLASHES or the script will FAIL! e.g.: \\\/mnt\\\/dir': "
+    echo -n "ATTENTION! Please DOUBLE escape SLASHES or\nthe script will FAIL! e.g.: \\\/mnt\\\/dir': "
     read path
     
     if [ $path == '' ]; then
@@ -78,10 +74,10 @@ if [[ $remote == 'n' ]]; then
       getconf 1 $user
     fi
     
-    echo -ne "Do you want (or must) to mount only a specific directory of the remote server?"
+    echo -ne "Do you want (or have) to mount only a\nspecific directory of the remote server?"
     echo -n "Please, specify the path of the directory"
     echo -n "Start with / and omit the trailing slash."
-    echo -n "ATTENTION! Please DOUBLE escape SLASHES or the script will FAIL! e.g.: \\\/home\\\/user': "
+    echo -n "ATTENTION! Please DOUBLE escape SLASHES or\nthe script will FAIL! e.g.: \\\/home\\\/user': "
     read rpath
     
     if [ $rpath == '' ]; then
@@ -90,7 +86,8 @@ if [[ $remote == 'n' ]]; then
     else   
       getconf 4 $rpath
     fi
-      
+  else #in any othe cases
+    echo -e "That was not an optional to follow instructions... Please restart the script now... >_>\n"; exit 1
   fi
   
 elif [[ remote == 'y' ]]; then
@@ -106,5 +103,5 @@ elif [[ remote == 'y' ]]; then
   fi
 fi
 
-echo -e "All showld be done. Take a look in $hostconfig.\nDo not forget to ssh-copy-id if needed. ByeBye"
+echo -e "All showld be done. Take a look in $hostconfig.\nDo not forget to ssh-copy-id if needed\nand to configure globbing.conf for your needs.\nByeBye"
 
