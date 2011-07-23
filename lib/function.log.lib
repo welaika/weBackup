@@ -6,6 +6,7 @@
 function create_log() {
 	local log_dir=$1
   local LOG=${log_dir}/weBackup.log.tmp
+  [[ -f ${log_dir}/weBackup.log.tmp ]] && touch ${log_dir}/weBackup.log.tmp
 	 # return log file name
 	 #  why echo and not return? I don't know at the moment...:S
 	 echo $LOG
