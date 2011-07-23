@@ -63,6 +63,7 @@ function exec_backup() {
 	elif [[ $MAIL -eq 1 ]]; then
 		send_mail
 	fi
+	archive_log
 }
 
 function print_version() {
@@ -95,7 +96,7 @@ fi
 . lib/sysconfig
 . lib/function.backup.lib
 . lib/function.log.lib
-. lib/function.mail.lib
+#. lib/function.mail.lib
 
 
 #
