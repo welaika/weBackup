@@ -71,7 +71,7 @@ function backup() {
 		  if ${servconf[0]}; then #if remote
 		    log "TESTING $host" "" 1
 			  log "rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host}" 1 1
-			  log "rdiff-backup --test-server ${user}${host}::/ \r\n\r\n" 1 1
+			  logcmd "rdiff-backup --test-server ${user}${host}::/" 1 1
 		  else #if local
         if ${servconf[3]}; then #if a remotely mounted sshfs filesystem
           mount_sshfs ${user}${host}::/ ${servconf[2]}
