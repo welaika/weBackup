@@ -71,7 +71,7 @@ function backup() {
 		  if ${servconf[0]}; then #if remote
 		    log "TESTING $host" "" 1
 			  log "rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host}" 1 1
-			  log "$(rdiff-backup --test-server ${user}${host}::/)\r\n\r\n" 1 1
+			  log "rdiff-backup --test-server ${user}${host}::/ \r\n\r\n" 1 1
 		  else #if local
         if ${servconf[3]}; then #if a remotely mounted sshfs filesystem
           mount_sshfs ${user}${host}::/ ${servconf[2]}
@@ -85,7 +85,8 @@ function backup() {
       # Deletion of temporary logs is a task of send_mail, but if we are in debug mode
       #+and we don't force mail sending with -m flag it won't be invoked. So we solve
       #+brutaly the problem with this fucking awful line
-      cat $LOG >> ${WD}/${LOG_MAIN_DIR}/weBackup.log && rm -f $LOG
+      #cat $LOG >> ${WD}/${LOG_MAIN_DIR}/weBackup.log && rm -f $LOG
+      #now this task is solved in backup.sh by archive_log() function
 		fi
 		##END DEBUG ONLY TASKS
 		
@@ -93,8 +94,8 @@ function backup() {
 		if [ ! $DEBUG -eq 1 ]; then
 		  #If verbose AND remote
 			if [ $VERBOSE -eq 1 ] && ${servconf[0]}; then
-				log "$(rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host})" 1 1
-				log "$(rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host})" "" 1
+				logcmd "rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host}" 1 1
+				logcmd "rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host}" "" 1
 			#else if verbose AND local
 			elif [ $VERBOSE -eq 1 ] && ! ${servconf[0]}; then
 			  # If my dir is a sshfsmounted dir than handle mount
@@ -102,18 +103,18 @@ function backup() {
 			  if ${servconf[3]}; then
           mount_sshfs
         fi
-			  log "$(rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host})" 1
-				log "$(rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host})"
+			  logcmd "rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host}" 1 1
+				logcmd "rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host}" "" 1
 		  else # else if local but NOT verbose
 			  if ${servconf[0]}; then #if remote
-				  log "$(rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host})" 1
-				  log "$(rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host})"
+				  logcmd "rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host}" 1
+				  logcmd "rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host}" 1
 			  else #if local
 			    if ${servconf[3]}; then
             mount_sshfs
           fi
-			    log "$(rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host})" 1
-				  log "$(rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host})"
+			    logcmd "rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host}" 1
+				  logcmd "rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host}" 1
 			  fi
 			fi
 		fi
@@ -121,7 +122,7 @@ function backup() {
 		# If we have $mounted true, so we have to unmount the dir
 		if [[ $mounted ]]; then
 		  `which fusermount` -u ${servconf[2]}
-		  log "Unmounted ${servconf[2]}" "" 1
+		  log "Unmounted ${servconf[2]}"
 		  # and unset it
 		  unset mounted
 	  fi
