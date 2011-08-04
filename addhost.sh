@@ -90,7 +90,7 @@ if [[ $remote == 'n' ]]; then
     echo -e "That was not an optional to follow instructions... Please restart the script now... >_>\n"; exit 1
   fi
   
-elif [[ remote == 'y' ]]; then
+elif [[ $remote == 'y' ]]; then
   getconf 0 true
   echo -ne "What is the name of the user you want to use\nto connect to the remote host? "
   read user
