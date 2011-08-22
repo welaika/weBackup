@@ -82,11 +82,6 @@ function backup() {
           log "ERROR: mount of the remote filesystem went bad; problem probably genereted remotly. Aborting" "" 1
 	      fi
       fi
-      # Deletion of temporary logs is a task of send_mail, but if we are in debug mode
-      #+and we don't force mail sending with -m flag it won't be invoked. So we solve
-      #+brutaly the problem with this fucking awful line
-      #cat $LOG >> ${WD}/${LOG_MAIN_DIR}/weBackup.log && rm -f $LOG
-      #now this task is solved in backup.sh by archive_log() function
 		fi
 		##END DEBUG ONLY TASKS
 		
@@ -196,19 +191,19 @@ function mount_sshfs(){
     if ${servconf[3]}; then
       if [[ ! `which sshfs` ]]; then
         log "FATAL: sshfs is not installed on the system. Aborting... \n try apt-get install sshfs" 1
-        exit 1
+        return 1
       fi
       if [[ ! -d ${servconf[2]} ]]; then mkdir ${servconf[2]}; fi
       `which sshfs` ${servconf[1]}@${host}:${servconf[4]} ${servconf[2]}
       
       if [[ $? != 0 ]]; then
         log "FATAL: mount of the remote filesystem went bad; problem probably genereted remotly. Aborting"
-        exit 1
+        return 1
       fi
       mountpoint ${servconf[2]} #double control of the mount is paranoic?
       if [[ $? != 0 ]]; then
         log "FATAL: mount of the remote filesystem went bad; problem probably genereted remotly. Aborting"
-        exit 1
+        return 1
       else
         # At the end of the backup process will be a pleasure to have a quick way to verify
         #+if the dir is alredy mounted to unmount it before process another host/dir.
