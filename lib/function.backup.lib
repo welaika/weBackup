@@ -39,13 +39,11 @@ function backup() {
 
 	for host in `ls $CONF_DIR`
 	do
-	  #Prsing the various hosts, ignore the template file plz
+	  #Parsing the various hosts, ignore the template file plz
 	  if [ $host == 'template.tpl' ]; then
 	    continue
     fi
-    # mounted=false #I want to be sure of it at this point of the script :)
-    #+commented out because put we on risk of remote dirs remained mounted
-    #+for some reasons...
+
 	  test_conf_dir $host #test if both per host conf files exists
 	  . ${CONF_DIR}/${host}/host.conf #then source one of them
 	  if [ $DEBUG -eq 1 ]; then
@@ -96,17 +94,18 @@ function backup() {
 			  # If my dir is a sshfsmounted dir than handle mount
 			  #+operations with the proper function
 			  if ${servconf[3]}; then
-          mount_sshfs
+          if ! mount_sshfs; then continue; fi 
         fi
 			  logcmd "rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host}" 1 1
 				logcmd "rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host}" "" 1
+        
 		  else # else if local but NOT verbose
 			  if ${servconf[0]}; then #if remote
 				  logcmd "rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host}" 1
 				  logcmd "rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host}" 1
 			  else #if local
 			    if ${servconf[3]}; then
-            mount_sshfs
+            if ! mount_sshfs; then continue; fi
           fi
 			    logcmd "rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host}" 1
 				  logcmd "rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host}" 1
@@ -211,8 +210,8 @@ function mount_sshfs(){
         #+and potentially put the word END on clients data... >_>
         mounted=true
       fi
-      return 0
     fi
   fi
+  return 0
 }
 
