@@ -1,44 +1,102 @@
-
 #	Log function library for Backup Script
 #
 #	Version: 0.4
 
-# create_log ( string dir, string extension, string prefix, string suffix )
+# create_log ( string dir )
 function create_log() {
 	local log_dir=$1
-	local log_extension=$2
-	local log_prefix=$3
-	local log_suffix=$4
-	
-	local log_sd=$log_dir"/"$(date '+%Y')
-	local log_ssd=$log_sd"/"$(date '+%m')
-	local log_sssd=$log_ssd"/"$(date '+%d')
-	
-	local LOG=$log_sssd"/"$log_prefix$(date '+%H%M%S')$log_suffix$log_extension
-	
-	local i=0
-	
-	while [  $i -eq 0 ]; do
-		 if [ -d $log_dir ]; then
-			if [ -d $log_sd ]; then
-				if [ -d $log_ssd ]; then
-					if [ -d $log_sssd ]; then
-						echo $(date '+%d/%m/%Y')" - "$(date '+%H:%M:%S') > $LOG
-						local i=1
-					else
-						mkdir $log_sssd
-					fi
-				else
-					mkdir $log_ssd
-				fi
-			else
-				mkdir $log_sd
-			fi
-		 else
-			mkdir $log_dir
-		 fi
-	 done
-	 
+  local LOG=${log_dir}/weBackup.log.tmp
+  [[ -f ${log_dir}/weBackup.log.tmp ]] && touch ${log_dir}/weBackup.log.tmp
 	 # return log file name
+	 #  why echo and not return? I don't know at the moment...:S
 	 echo $LOG
+}
+
+# logdate ( no args )
+# Sets a variable to handle the log lines prefix with [TAG] [date-hour] "
+function logdate(){
+  today=$(date +%F) #giorno
+  ora=$(date +%H:%M:%S) #data
+  logtag="[weBackup]"
+  
+  echo -n "$logtag [$today-$ora] "
+}
+
+# test_logrotate( no args )
+# Test if logrotate is installed or warn the user. If installed but not configured
+#+then it print the configuration in the right place...
+function test_logrotate(){
+  if [[ ! `which logrotate` ]]; then
+    log "WARN: logrotate not installed in your system. Please try \"apt-get install logrotate\" to activate log rotation\n" 1 1;
+    return 1
+  fi
+  if [ ! -f "/etc/logrotate.d/weBackup" ]; then
+    if [ -d "/etc/logrotate.d" ]; then  
+      log "WARN: logrotate configuration not present. We are creating it at /etc/logrotate.d/weBackup\n" 1 1
+        cat <<EOT > /etc/logrotate.d/weBackup
+${WD}/${LOG_MAIN_DIR}/*.log {
+    weekly
+    missingok
+    rotate 10
+    compress
+    delaycompress
+    notifempty
+    create 640 root adm
+}
+EOT
+    else
+      echo -e "WARN: we cannot find the logrotate conf dir in the usual path. Please, make yourself a logrotate config file with these parameters:\n"
+      cat <<EOT
+${WD}/${LOG_MAIN_DIR}/*.log {
+    weekly
+    missingok
+    rotate 10
+    compress
+    delaycompress
+    notifempty
+    create 640 root adm
+}
+EOT
+    return 1
+    
+    fi
+  fi
+  
+  return 0
+}
+
+# logcmd( command_in_string_form, 1, 1 )
+# se passato il secondo argomento, allora attiva l'escape dei backspaces sull'echo
+# se passato il terzo argomento allora stampo anche a video
+# logcmd() serve ad inserire nei log l'output (1 e 2) dei comandi
+function logcmd(){
+  [[ $2 ]] && stampa="echo -e" || stampa="echo"
+    logdate >> $LOG
+    $1 >> $LOG 2>&1
+  [[ $3 ]] && logdate; $stampa $1;
+}
+
+# logcmd( text_string, 1, 1 )
+# se passato il secondo argomento, allora attiva l'escape dei backspaces sull'echo
+# se passato il terzo argomento allora stampo anche a video
+# log() serve ad inserire nei log stringhe di testo arbitrarie
+function log(){
+  [[ $2 ]] && stampa="echo -e" || stampa="echo"
+    logdate >> $LOG
+    $stampa $1 >> $LOG
+  [[ $3 ]] && logdate; $stampa $1;
+}
+
+# sendmail (  )
+function send_mail() {
+	for mail in $MAIL_ADDR
+	do
+		mail -s $MAIL_SUBJ $mail < ${LOG}
+	done
+}
+
+# archive_log (  )
+function archive_log() {
+	cat $LOG >> ${WD}/${LOG_MAIN_DIR}/weBackup.log
+	rm -f $LOG
 }

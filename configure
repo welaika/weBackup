@@ -1,12 +1,12 @@
 ##	Config for backup.sh 
 
 # Backup save directory
-	BACKUP_DIR=""
+	BACKUP_DIR="/backup"
 
 # Mail addresses to send log after backup complete ( can be single 
 #+	address or array
-	MAIL_ADDR=( "" )
-	MAIL_SUBJ=''
+	MAIL_ADDR=( "ict@acmos.net" "edoardo.tenani@gmail.com" )
+	MAIL_SUBJ="Backup Report"
 
 # Activate retention time
 #   You can decide whether or not to delete incremets older than
@@ -26,6 +26,7 @@
 #+ than $RETENTION...consider it a ToDo
 
 	RETENTION="2W"
+	
 
 # EDIT ONLY IF YOU KNOW WAHT YOU ARE DOIING ---------------------------
 
@@ -34,10 +35,4 @@
 
 # Log file info
 	LOG_MAIN_DIR="log"
-	LOG_EXTENSION=".log"
-	
-	# A separator must be present
-	#LOG_PREFIX=""
-	#LOG_SUFFIX=""
 
-	

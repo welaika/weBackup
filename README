@@ -1,49 +1,57 @@
 Backup Script
 -------------
-Using rdiff-backup create backup of remote host in local folder.
+Using rdiff-backup create backup of remote host in local folder,
+of a local folder in another local folder or mount a remote folder
+using sshfs and back it up.
+For the last one OpenSSH-server needed on the remote machine.
 
 
 INSTALL
 -------
 1. Untar package
 2. Install rdiff-backup on local machine
-3. Install a mail server ( used to send mail with logs after backup
-	complete )
-4. Install rdiff-backup on every remote machine you need to backup
-  1. See "HOW TO - HOW IT WORKS" before next step
-5. Copy "configure.tpl" to "configure" and edit file accord to your
-	needs
-6. Put inside "conf" directory files related to host you want to backup
-7. Run script
-	./backup.sh [OPTIONS] [COMMAND]
-	See ./backup.sh -h
+3. Install an SMTP ( used to send mail with logs after backup
+	complete ). Our choice is postfix with "Internet Site" option
+	checked durin setup (At least if you install it from repos).
+4a. Install rdiff-backup on every remote machine you need to backup
+  4.1. See "HOW TO - HOW IT WORKS" before next step.
+4b. If you haven't administrator privileges on your remote machines,
+    we can work it out using sshfs. Please install it on your system
+    with "apt-get install sshfs" for debina-based OS or equivalent
+    command.
 
- 
 HOW TO - HOW IT WORKS
 ---------------------
 To let rdiff-backup perform backups, a ssh access to the machine that 
 needs backup must be provided. rdiff-backup use 'root' account to
 connect using ssh ( and this cannot be changed ) so the best way to
 accomplish this is enabling ssh login to root accont on server only 
-with ssh keys ( disabling access with password )
+with ssh keys ( disabling access with password ). For references:
+http://bit.ly/qdECva
+http://bit.ly/qMbbVG
+
+HOW TO - CONFIGURE A HOST
+------------------------
+Go in the base directory of the script and type
+./addhost.sh
+An interactive script will guide you through the creation of the host
+configuration. At the end of this process it will remind you to set up
+pubkey ssh autentication (not yet implemented an automatic process) and
+to set up the globbing-file-list in globbing.conf.
+REMEBER that if you want to exclude a dir you have, e.g. to exclude
+/var/log, to write:
+- /var/log
+/var
+in the right order, with the exclusion of a deepest path before the
+inclusione of a higher one. That's ok? If not you have to study a bit
+of rdiff-backup doc. See below for references.
 
 
-HOW TO - HOST SPECIFICATION
----------------------------
-Files inside "conf" directory must be written in a specific way:
- - name of the file must match the host name you want to backup
-	( is used to connect to host via ssh )
- - inside every file specify a list on new-line separated folders
-	with absolute path
-	
-Example:
-	host: subdomain.example.org
-	
-	file name: subdomain.example.org
-	file content:
-		/home
-		/var/log
-		/etc
+HOW TO - DO A BACKUP
+------------------------
+From the scripts basedir run script
+	./backup.sh [OPTIONS] [COMMAND]
+	See ./backup.sh -h
 
 
 REFERENCES
