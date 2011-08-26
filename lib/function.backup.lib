@@ -4,6 +4,7 @@
 #	Version: 0.5
 
 # backup (  )
+# The main backup function. Tass!
 function backup() {
 	
 	if [[ ! $(ls -A $CONF_DIR) ]]; then
@@ -15,17 +16,20 @@ function backup() {
 	fi
 
 	if [ $VERBOSE -eq 1 ]; then
-		echo -e "Backup local disk: "$BACKUP_DIR | tee -a $LOG
-		echo -e "Backup local conf: "$CONF_DIR | tee -a $LOG
-		echo -e "Log file         : "$LOG | tee -a $LOG
-		echo ""
+	  log "Backup local disk: $BACKUP_DIR" 1 1
+		log "Backup local conf: $CONF_DIR" 1 1
+		log "Log file         : $LOG" 1 1
 	
-		echo "Hosts:" | tee -a $LOG
+		log "Hosts:"
 		for host in `ls $CONF_DIR`
 		do
-			echo "> "$host | tee -a $LOG
+		  #Parsing the various hosts, ignore the template file plz
+		  if [ $host == 'template.tpl' ]; then
+		    continue
+	    fi
+		  test_conf_dir $host
+			log "$host" "" 1
 		done
-		echo "" | tee -a $LOG
 		
 		echo -n "Startin backup"
 		backup_delay $DELAY 1
@@ -35,42 +39,106 @@ function backup() {
 
 	for host in `ls $CONF_DIR`
 	do
+	  #Parsing the various hosts, ignore the template file plz
+	  if [ $host == 'template.tpl' ]; then
+	    continue
+    fi
+
+	  test_conf_dir $host #test if both per host conf files exists
+	  . ${CONF_DIR}/${host}/host.conf #then source one of them
+	  if [ $DEBUG -eq 1 ]; then
+  	  log "Using $host configuration" "" 1
+	  fi
+	  
+	  if ${servconf[0]}; then #if remote
+  	  user="${servconf[1]}@" #set the proper username
+	  else #if local
+	    user="" #no username needed
+	    # For remotly mounted sshfs file systems we'll
+	    #+have an ad hoc username from host.conf
+    fi
+	  
 		if [ $VERBOSE -eq 1 ]; then
-			echo "Inizio Backup per: "$host | tee -a $LOG
-			echo "" | tee -a $LOG
+			log "Inizio Backup per: $host\n" 1 1
 		fi
 		
+		##STARTS DEBUG ONLY TASKS
 		if [ ! $DEBUG -eq 1 ]; then
 			dest_dir $host
+		else
+		  if ${servconf[0]}; then #if remote
+		    log "TESTING $host" "" 1
+			  log "rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host}" 1 1
+			  logcmd "rdiff-backup --test-server ${user}${host}::/" 1 1
+		  else #if local
+        if ${servconf[3]}; then #if a remotely mounted sshfs filesystem
+          mount_sshfs ${user}${host}::/ ${servconf[2]}
+        fi
+        log "TESTING mountpoint /mnt/$host" "" 1
+        mountpoint ${servconf[2]} > /dev/null
+        if [[ $? != 0 ]]; then
+          log "ERROR: mount of the remote filesystem went bad; problem probably genereted remotly. Aborting" "" 1
+	      fi
+      fi
 		fi
-
-		if [ $DEBUG -eq 1 ]; then
-			echo ">> rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist "$CONF_DIR"/"$host" --exclude / root@"$host"::/" $BACKUP_DIR"/"$host | tee -a $LOG
-			echo "" | tee -a $LOG
-			rdiff-backup --test-server root@${host}::/ | tee -a $LOG
-			echo "" | tee -a $LOG 
-		fi
+		##END DEBUG ONLY TASKS
 		
+		##START SERIUS BACKUP
 		if [ ! $DEBUG -eq 1 ]; then
-			if [ $VERBOSE -eq 1 ]; then
-				rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host} --exclude / root@${host}::/ ${BACKUP_DIR}/${host} 2>&1 | tee -a $LOG
-				rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host} 2>&1 | tee -a $LOG
-				echo "" | tee -a $LOG
-			else
-				rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --include-globbing-filelist ${CONF_DIR}/${host} --exclude / root@${host}::/ ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
-				rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host} 2>&1 >> tee $LOG
-				echo "" >> $LOG
+		  #If verbose AND remote
+			if [ $VERBOSE -eq 1 ] && ${servconf[0]}; then
+				logcmd "rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host}" 1 1
+				logcmd "rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host}" "" 1
+			#else if verbose AND local
+			elif [ $VERBOSE -eq 1 ] && ! ${servconf[0]}; then
+			  # If my dir is a sshfsmounted dir than handle mount
+			  #+operations with the proper function
+			  if ${servconf[3]}; then
+          if ! mount_sshfs; then continue; fi 
+        fi
+			  logcmd "rdiff-backup --print-statistics --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host}" 1 1
+				logcmd "rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host}" "" 1
+        
+		  else # else if local but NOT verbose
+			  if ${servconf[0]}; then #if remote
+				  logcmd "rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host}" 1
+				  logcmd "rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host}" 1
+			  else #if local
+			    if ${servconf[3]}; then
+            if ! mount_sshfs; then continue; fi
+          fi
+			    logcmd "rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host}" 1
+				  logcmd "rdiff-backup --force --remove-older-than ${RETENTION} ${BACKUP_DIR}/${host}" 1
+			  fi
 			fi
 		fi
-				
-		echo "" | tee -a $LOG
+		
+		# If we have $mounted true, so we have to unmount the dir
+		if [[ $mounted ]]; then
+		  `which fusermount` -u ${servconf[2]}
+		  log "Unmounted ${servconf[2]}"
+		  # and unset it
+		  unset mounted
+	  fi
 	done
-	
+}
+
+# test_conf_dir ( host )
+# Test if the needed config files exist
+function test_conf_dir(){
+  if [ ! -f ${CONF_DIR}/$1/globbing.conf ] || [ ! -f ${CONF_DIR}/$1/host.conf ]; then
+    log "Missing configuration files for host ${1}. Aborting"
+    exit 1
+  fi
+  
+  return 0
 }
 
 # dest_dir ( string name )
+# Test if backup destination directory exists and if not
+#+create it.
 function dest_dir() {
-	local dir=$BACKUP_DIR"/"$1
+	local dir=${BACKUP_DIR}/${1}
 	
 	if [ -d $dir ]; then
 		if [ $VERBOSE -eq 1 ]; then
@@ -97,7 +165,6 @@ function dest_dir() {
 }
 
 # delay ( int time, bool stdout )
-
 function backup_delay() {
 	local delay_time=$1
 	local stdout=$2
@@ -114,3 +181,37 @@ function backup_delay() {
 		echo -e "\n"
 	fi
 }
+
+# mount_sshfs ( user@host:dir mountpoint )
+# This function will be valid only inside backup() function
+#+due to use of certain variables setted there...
+function mount_sshfs(){
+  if ! ${servconf[0]}; then
+    if ${servconf[3]}; then
+      if [[ ! `which sshfs` ]]; then
+        log "FATAL: sshfs is not installed on the system. Aborting... \n try apt-get install sshfs" 1
+        return 1
+      fi
+      if [[ ! -d ${servconf[2]} ]]; then mkdir ${servconf[2]}; fi
+      `which sshfs` ${servconf[1]}@${host}:${servconf[4]} ${servconf[2]}
+      
+      if [[ $? != 0 ]]; then
+        log "FATAL: mount of the remote filesystem went bad; problem probably genereted remotly. Aborting"
+        return 1
+      fi
+      mountpoint ${servconf[2]} #double control of the mount is paranoic?
+      if [[ $? != 0 ]]; then
+        log "FATAL: mount of the remote filesystem went bad; problem probably genereted remotly. Aborting"
+        return 1
+      else
+        # At the end of the backup process will be a pleasure to have a quick way to verify
+        #+if the dir is alredy mounted to unmount it before process another host/dir.
+        #+Only to minimize risks that someone could have access to the remote files from the backup server
+        #+and potentially put the word END on clients data... >_>
+        mounted=true
+      fi
+    fi
+  fi
+  return 0
+}
+
