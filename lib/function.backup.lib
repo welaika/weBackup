@@ -7,7 +7,7 @@
 # The main backup function. Tass!
 function backup() {
   
-  if [[ ! $(ls -A $CONF_DIR) ]]; then
+  if [[ ! $(ls -A $CONF_DIR) ]]; then #inconsistent test since introduction of tpl files
     echo ""
     echo "No host file specified in '$CONF_DIR'"
     echo "Stopping backup"
@@ -117,14 +117,20 @@ function backup() {
     if [[ $mounted ]]; then
       `which fusermount` -u ${servconf[2]}
       log "Unmounted ${servconf[2]}"
+      if [ $? -ne 0 ]; then
+        log "Errrr...probably something wrong unmountig the remote FS...I'm sorry"
+      fi
       # and unset it
       unset mounted
     fi
   done
 }
 
-# test_conf_dir ( host )
+#=============================================
+# test_conf_dir ()
+#   $1 host
 # Test if the needed config files exist
+#=============================================
 function test_conf_dir(){
   if [ ! -f ${CONF_DIR}/$1/globbing.conf ] || [ ! -f ${CONF_DIR}/$1/host.conf ]; then
     log "Missing configuration files for host ${1}. Aborting"
@@ -134,9 +140,11 @@ function test_conf_dir(){
   return 0
 }
 
+#=============================================
 # dest_dir ( string name )
 # Test if backup destination directory exists and if not
 #+create it.
+#=============================================
 function dest_dir() {
   local dir=${BACKUP_DIR}/${1}
   
@@ -182,9 +190,11 @@ function backup_delay() {
   fi
 }
 
+#=============================================
 # mount_sshfs ( user@host:dir mountpoint )
 # This function will be valid only inside backup() function
 #+due to use of certain variables setted there...
+#=============================================
 function mount_sshfs(){
   if ! ${servconf[0]}; then
     if ${servconf[3]}; then
