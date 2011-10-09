@@ -1,0 +1,22 @@
+hr{
+    height: 5px;
+    color: blue;
+}
+
+/*div.verify{
+    background: #aaa;
+    padding: 5px;
+    border-left: 5px solid blue;
+    width: 95%;
+    height: auto;
+}*/
+
+pre{
+    background: #aaa;
+    border-left: 5px solid blue;
+    padding: 5px;
+}
+
+.path{
+    width: 50%;
+}
