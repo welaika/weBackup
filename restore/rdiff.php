@@ -40,7 +40,7 @@
 /*****************************
 *VARIABILI GENERALI***********
 *****************************/
-
+error_reporting(E_ERROR | E_WARNING | E_PARSE); //per debug cazzuto aggiungere E_NOTICE
 $filename = '.shadow'; 					//file in cui è memorizzata la password
 $pwd = file("$filename", FILE_IGNORE_NEW_LINES); 	//leggo la pwd da dentro il file .shadow
 $pwdctrl = $_POST['password'];				//imposto la variabile di controlla password
