@@ -192,7 +192,16 @@ function mount_sshfs(){
         log "FATAL: sshfs is not installed on the system. Aborting... \n try apt-get install sshfs" 1
         return 1
       fi
+      
       if [[ ! -d ${servconf[2]} ]]; then mkdir ${servconf[2]}; fi
+
+      # If at this point for any reason of the hell the mountpoint is already mounted, unmount it
+      #+befor the nect mount
+      if mountpoint ${servconf[2]}; then
+        `which fusermount` -u ${servconf[2]};
+        log "Unmounted ${servconf[2]}: it was already mounted for some reason"
+      fi
+      
       `which sshfs` ${servconf[1]}@${host}:${servconf[4]} ${servconf[2]}
       
       if [[ $? != 0 ]]; then
