@@ -1,7 +1,7 @@
 #!/bin/bash
 # Script to set up a new host backup
-# At the moment you we have no way to control il ssh-key are well setted
-#+and I don't know if I'll implement it... :s
+# At the moment we have no way to control if ssh-keys are well setted
+#+and I don't know if I'll implement this... :s
 
 . configure
 
