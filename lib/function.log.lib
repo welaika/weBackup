@@ -89,10 +89,17 @@ function log(){
 
 # sendmail (  )
 function send_mail() {
-	for mail in ${MAIL_ADDR[*]}
-	do
-		mail -s $MAIL_SUBJ $mail < ${LOG}
-	done
+  for mail in ${MAIL_ADDR[*]}
+    if [[ ${SMTP_HOST} ]]; then
+    	do
+        env MAILRC=/dev/null from=backup@welaika.com \
+        smtp=${SMTP_HOST} smtp-auth-user=${SMTP_USER} \
+        smtp-auth-password=${SMTP_PASSWORD} smtp-auth=${SMTP_AUTH} \
+        mailx -n -s "Backup Report" $mail < ${LOG}
+    	done
+    else
+      mail -s $MAIL_SUBJ $mail < ${LOG}
+    fi
 }
 
 # archive_log (  )
