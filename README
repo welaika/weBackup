@@ -10,9 +10,9 @@ INSTALL
 -------
 1. Untar package
 2. Install rdiff-backup on local machine
-3. Install an SMTP ( used to send mail with logs after backup
-	complete ). Our choice is postfix with "Internet Site" option
-	checked durin setup (At least if you install it from repos).
+3. Install an heirloom-mailx (debian family: apt-get install
+  heirloom-mailx). Then go to the "configure" file in the script's
+  root folder and set up your external SMTP.
 4a. Install rdiff-backup on every remote machine you need to backup
   4.1. See "HOW TO - HOW IT WORKS" before next step.
 4b. If you haven't administrator privileges on your remote machines,
