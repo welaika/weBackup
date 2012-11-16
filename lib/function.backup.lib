@@ -202,7 +202,7 @@ function mount_sshfs(){
         log "Unmounted ${servconf[2]}: it was already mounted for some reason"
       fi
       
-      `which sshfs` ${servconf[1]}@${host}:${servconf[4]} ${servconf[2]}
+      `which sshfs` ${servconf[1]}@${host}:${servconf[4]} ${servconf[2]} -C
       
       if [[ $? != 0 ]]; then
         log "FATAL: mount of the remote filesystem went bad; problem probably genereted remotly. Aborting"
