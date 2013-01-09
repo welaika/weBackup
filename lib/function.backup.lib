@@ -306,7 +306,3 @@ function mount_sshfs(){
   return 0
 }
 
-
-function transitionals(){
-  return 0
-}
