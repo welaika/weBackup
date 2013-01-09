@@ -76,7 +76,7 @@ function logcmd(){
   [[ $3 ]] && logdate; $stampa $1;
 }
 
-# logcmd( text_string, 1, 1 )
+# log( text_string, 1, 1 )
 # se passato il secondo argomento, allora attiva l'escape dei backspaces sull'echo
 # se passato il terzo argomento allora stampo anche a video
 # log() serve ad inserire nei log stringhe di testo arbitrarie
