@@ -1,6 +1,6 @@
 ## Backup Script
 
-### Using rdiff-backup create backup of remote host in local folder, of a local folder in another local folder or mount a remote folder using sshfs and back it up. For the last one OpenSSH-server needed on the remote machine.
+### Using rdiff-backup create backup of remote host in local folder, of a local folder in another local folder or mount a remote folder using sshfs and back it up.
 
 
 INSTALL
