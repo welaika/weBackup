@@ -1,6 +1,12 @@
 This is a ChangeLog...almost. We track only big changes in help
 of our poor memory. So don't expect a lot of infos here ;)
 
+Gen2012
+-------
+
+* Project renamed in weBackup. Niceier ;)
+* Per host retention setting implementation
+
 Oct2012
 -------
 
