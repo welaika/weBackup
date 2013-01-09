@@ -10,10 +10,7 @@ if [ ! -e "configure" ]; then
 fi
 
 . configure
-. lib/sysconfig
-. lib/function.backup.lib
-. lib/function.log.lib
-#. lib/function.mail.lib
+. lib/*
 
 
 #
