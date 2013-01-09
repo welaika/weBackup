@@ -12,7 +12,6 @@ fi
 . configure
 . lib/*
 
-
 #
 ##	CODE
 #
@@ -30,6 +29,9 @@ VERBOSE=0
 MAIL=0
 
 LOG=$(create_log ${WD}/${LOG_MAIN_DIR} "" "" $LOG_EXTENSION)
+
+# test if there are backward compatibility problems
+transitionals
 
 if [ $# -eq 0 ]; then
 	usage
