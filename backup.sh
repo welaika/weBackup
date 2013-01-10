@@ -10,7 +10,9 @@ if [ ! -e "configure" ]; then
 fi
 
 . configure
-. lib/*
+for lib in `ls lib/`; do
+	. $i
+done
 
 #
 ##	CODE
