@@ -27,6 +27,12 @@
 
 	RETENTION="2W"
 
+#EXTERNAL SMTP CONFIGS
+  SMTP_HOST=""
+  SMTP_USER=""
+  SMTP_PASSWORD=""
+  SMTP_AUTH=""
+
 # EDIT ONLY IF YOU KNOW WAHT YOU ARE DOIING ---------------------------
 
 # Folder from which load configuration file
