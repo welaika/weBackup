@@ -14,7 +14,7 @@ function transitionals(){
 function tr__perhostretention(){
   for host in $HOSTS; do
     . ${CONF_DIR}/${host}/host.conf
-    ${servconf[5]} || (
+    [[ ${servconf[5]} ]] || (
         log <<EOT
           [ALERT]
           ${host}/host.conf seems out of date, since it has not retention
