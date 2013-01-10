@@ -15,7 +15,7 @@ function tr__perhostretention(){
   for host in $HOSTS; do
     . ${CONF_DIR}/${host}/host.conf
     [[ ${servconf[5]} ]] || (
-        log <<EOT
+        message=<<EOT
           [ALERT]
           ${host}/host.conf seems out of date, since it has not retention
           setting. Please take a look and if it has not add these lines at
@@ -32,6 +32,7 @@ function tr__perhostretention(){
           the retention time will be set as 2 weeks.
 
 EOT
+        log $message 1 1
       )
   done
 }
