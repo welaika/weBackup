@@ -1,2 +1,3 @@
 /conf/*
 !/conf/template.tpl
+/configure
