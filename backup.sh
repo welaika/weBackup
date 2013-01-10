@@ -11,7 +11,7 @@ fi
 
 . configure
 for lib in `ls lib/`; do
-	. $lib
+	. lib/$lib
 done
 
 #
