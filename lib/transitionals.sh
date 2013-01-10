@@ -16,8 +16,8 @@ function transitionals() {
 function tr__perhostretention() {
   for host in $HOSTS; do
     . ${CONF_DIR}/${host}/host.conf
-    ${servconf[5]} || log <<EOT
-"[ALERT]
+    message="
+[ALERT]
 ${host}/host.conf seems out of date, since it has not retention
 setting. Please take a look and if it has not add these lines at
 the end of the array inside the file:
@@ -31,6 +31,7 @@ the end of the array inside the file:
 
 You can follow template.tpl/host.conf as example. If you won't do this,
 the retention time will be set as 2 weeks.
-EOT
+"
+    ${servconf[5]} || log $message 1 1
 
 }
