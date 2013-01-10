@@ -16,21 +16,21 @@ function tr__perhostretention(){
     . ${CONF_DIR}/${host}/host.conf
     [[ ${servconf[5]} ]] || (
       read -r -d '' message <<EOT
-[ALERT]
-${host}/host.conf seems out of date, since it has not retention
-setting. Please take a look and if it has not add these lines at
-the end of the array inside the file:
-
-#retention
-##########
-# Set the retention of the backups for the specific host in weeks. MUST be an
-# integer (e.g.: 2 stands for 2 weeks). Incremental backups older than $retention
-# will be deleted. Default is 2 week.
-[5]=2
-
-You can follow template.tpl/host.conf as example. If you won't do this,
-the retention time will be set as 2 weeks.
-
+[ALERT]\n
+${host}/host.conf seems out of date, since it has not retention\n
+setting. Please take a look and if it has not add these lines at\n
+the end of the array inside the file:\n
+\n
+#retention\n
+##########\n
+# Set the retention of the backups for the specific host in weeks. MUST be an\n
+# integer (e.g.: 2 stands for 2 weeks). Incremental backups older than $retention\n
+# will be deleted. Default is 2 week.\n
+[5]=2\n
+\n
+You can follow template.tpl/host.conf as example. If you won't do this,\n
+the retention time will be set as 2 weeks.\n
+\n
 EOT
         log "$message" 1 1
       )
