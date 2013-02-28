@@ -7,6 +7,13 @@
 #+	address or array
 	MAIL_ADDR=( "" )
 	MAIL_SUBJ=''
+  MAIL_FROM=''
+
+#EXTERNAL SMTP CONFIGS
+  SMTP_HOST=""
+  SMTP_USER=""
+  SMTP_PASSWORD=""
+  SMTP_AUTH=""
 
 # Activate retention time
 #   You can decide whether or not to delete incremets older than
@@ -25,13 +32,8 @@
 #N.B.: at the moment is not possible to disable deletion of increments older
 #+ than $RETENTION...consider it a ToDo
 
-	RETENTION="2W"
+  RETENTION="2W"
 
-#EXTERNAL SMTP CONFIGS
-  SMTP_HOST=""
-  SMTP_USER=""
-  SMTP_PASSWORD=""
-  SMTP_AUTH=""
 
 # EDIT ONLY IF YOU KNOW WAHT YOU ARE DOIING ---------------------------
 
