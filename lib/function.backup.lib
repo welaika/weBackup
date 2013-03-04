@@ -135,7 +135,7 @@ function backup() {
     #if i have a per host retention setting
     if [[ ${servconf[5]} ]]; then
       #than set it for further use
-      __ret=${servconf[5]}
+      __ret=${servconf[5]}W
     else
       #else set it to the global retention setting
       __ret=${RETENTION}
@@ -178,7 +178,7 @@ function backup() {
 		if [ ! $DEBUG -eq 1 ]; then
 		  #If verbose AND remote
 			if [ $VERBOSE -eq 1 ] && ${servconf[0]}; then
-				logcmd "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host}" 1 1
+				logcmd "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/${servconf[4]} ${BACKUP_DIR}/${host}" 1 1
 				logcmd "rdiff-backup --force --remove-older-than ${__ret} ${BACKUP_DIR}/${host}" "" 1
 			#else if verbose AND local
 			elif [ $VERBOSE -eq 1 ] && ! ${servconf[0]}; then
@@ -190,9 +190,9 @@ function backup() {
 			  logcmd "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host}" 1 1
 				logcmd "rdiff-backup --force --remove-older-than ${__ret} ${BACKUP_DIR}/${host}" "" 1
         
-		  else # else if local but NOT verbose
+		  else # else if remote but NOT verbose
 			  if ${servconf[0]}; then #if remote
-				  logcmd "rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --exclude-special-files --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host}" 1
+				  logcmd "rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --exclude-special-files --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/${servconf[4]} ${BACKUP_DIR}/${host}" 1
 				  logcmd "rdiff-backup --force --remove-older-than ${__ret} ${BACKUP_DIR}/${host}" 1
 			  else #if local
 			    if ${servconf[3]}; then
