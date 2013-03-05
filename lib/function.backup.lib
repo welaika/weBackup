@@ -180,9 +180,11 @@ function backup() {
 			if [ $VERBOSE -eq 1 ] && ${servconf[0]}; then
         if ${servconf[4]}; then
           logcmd "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${user}${host}::${servconf[4]} ${BACKUP_DIR}/${host}" 1 1
+				  logcmd "rdiff-backup --force --remove-older-than ${__ret} ${BACKUP_DIR}/${host}" "" 1
+        else
+          logcmd "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host}" 1 1
+          logcmd "rdiff-backup --force --remove-older-than ${__ret} ${BACKUP_DIR}/${host}" "" 1
         fi
-				logcmd "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host}" 1 1
-				logcmd "rdiff-backup --force --remove-older-than ${__ret} ${BACKUP_DIR}/${host}" "" 1
 			#else if verbose AND local
 			elif [ $VERBOSE -eq 1 ] && ! ${servconf[0]}; then
 			  # If my dir is a sshfsmounted dir than handle mount
@@ -197,9 +199,11 @@ function backup() {
 			  if ${servconf[0]}; then #if remote
           if ${servconf[4]}; then
             logcmd "rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --exclude-special-files --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${user}${host}::${servconf[4]} ${BACKUP_DIR}/${host}" 1
-				  fi
-          logcmd "rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --exclude-special-files --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host}" 1
-				  logcmd "rdiff-backup --force --remove-older-than ${__ret} ${BACKUP_DIR}/${host}" 1
+				    logcmd "rdiff-backup --force --remove-older-than ${__ret} ${BACKUP_DIR}/${host}" 1
+          else
+            logcmd "rdiff-backup --verbosity $RDIFF_VERBOSITY --print-statistics --exclude-special-files --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host}" 1
+            logcmd "rdiff-backup --force --remove-older-than ${__ret} ${BACKUP_DIR}/${host}" 1
+        fi
 			  else #if local
 			    if ${servconf[3]}; then
             if ! mount_sshfs; then continue; fi
