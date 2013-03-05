@@ -66,11 +66,11 @@ function constructor(){
   # If I have a per host retention setting
   if [[ ${servconf[5]} ]]; then
     #than set it for further use
-    __ret=${servconf[5]}W
+    __ret=${servconf[5]}
   #else set it to the global retention setting
   else
     __ret=${RETENTION}
   fi
-  
+
   return 0
 }
