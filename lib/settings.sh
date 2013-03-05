@@ -58,3 +58,19 @@ function set_verbose() {
   echo "Verbose Mode Enabled" | tee -a $LOG
   VERBOSE=1
 }
+
+function constructor(){
+  # If rpath is not set we default to / (root)
+  ${servconf[4]} || servconf[4] = '/'
+
+  # If I have a per host retention setting
+  if [[ ${servconf[5]} ]]; then
+    #than set it for further use
+    __ret=${servconf[5]}W
+  #else set it to the global retention setting
+  else
+    __ret=${RETENTION}
+  fi
+  
+  return 0
+}
