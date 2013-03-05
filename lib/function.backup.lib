@@ -7,6 +7,26 @@
 ##  FUNCTION DECLARATION
 #
 
+# Handling function for command line arguments
+function exec_backup() {
+  test_logrotate
+  constructor
+  backup
+
+  if [ $VERBOSE -eq 1 ]; then
+    df -h | tee -a $LOG
+  else
+    df -h >> $LOG
+  fi
+  
+  if [ ! $DEBUG -eq 1 ]; then
+    send_mail
+  elif [[ $MAIL -eq 1 ]]; then
+    send_mail
+  fi
+  archive_log
+}
+
 # backup (  )
 # The main backup function. Tass!
 function backup() {
@@ -146,24 +166,7 @@ function backup() {
 	done
 }
 
-# Handling function for command line arguments
-function exec_backup() {
-  test_logrotate
-  backup
 
-  if [ $VERBOSE -eq 1 ]; then
-    df -h | tee -a $LOG
-  else
-    df -h >> $LOG
-  fi
-  
-  if [ ! $DEBUG -eq 1 ]; then
-    send_mail
-  elif [[ $MAIL -eq 1 ]]; then
-    send_mail
-  fi
-  archive_log
-}
 
 
 # test_conf_dir ( host )
