@@ -5,6 +5,7 @@
 
 function transitionals(){
   tr__perhostretention
+  tr__retentionsyntax
   return 0
 }
 
@@ -32,7 +33,23 @@ You can follow template.tpl/host.conf as example. If you won't do this,\n
 the retention time will be set as 2 weeks.\n
 \n
 EOT
-        log "$message" 1 1
-      )
+        log "$message" 1
+    )
+  done
+}
+
+function tr__retentionsyntax(){
+  for host in $HOSTS; do
+    . ${CONF_DIR}/${host}/host.conf
+    [[ ${servconf[5]} =~ ^[0-9]+$ ]] && (
+      read -r -d '' message <<EOT
+[ALERT]\n
+${host}/host.conf seems containing errors, since retention is numeric only.\n
+Read the file comments to learn more about retention units W, D, ecc. If in doubt\n
+put W as unit as it stands for weeks
+\n
+EOT
+      log "$message" 1
+    )
   done
 }
