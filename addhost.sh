@@ -50,7 +50,8 @@ elif [[ $go == 'n' ]]; then
   info "Mmmm, ok...see you"; exit 0
 fi
 
-question "What is the name of the host to add? If it\nis a remote site USE its DOMAIN NAME: "
+question "What is the name of the host to add? If it"
+question "is a remote site USE its DOMAIN NAME: "
 read host
 
 hostconfig=${CONF_DIR}/${host}/host.conf
