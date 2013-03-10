@@ -3,18 +3,36 @@
 # At the moment we have no way to control if ssh-keys are well setted
 #+and I don't know if I'll implement this... :s
 
+# Colorized feedback functions.
+# Helper feedback functions
+function info() {
+  echo "${COLOR_BOLD}    * ${1}${COLOR_RESET}"
+}
+function success() {
+  echo "${COLOR_BOLD}${COLOR_GREEN}   ** ${1}${COLOR_RESET}"
+}
+function warning() {
+  echo "${COLOR_BOLD}${COLOR_YELLOW}  *** ${1}${COLOR_RESET}"
+}
+function error() {
+  echo "${COLOR_BOLD}${COLOR_RED} **** ${1}${COLOR_RESET}"
+}
+function question() {
+  echo -n "${COLOR_BOLD}${COLOR_BLU}    ? ${1}?${COLOR_RESET} "
+}
+
 . configure
 
-echo -ne "Hi guy! Do  you want to set up a now host backup? [y] [n]: "
+question "Hi guy! Do  you want to set up a now host backup? [y] [n]: "
 read go
 
 if [[ $go != 'n' ]] && [[ $go != 'y' ]]; then
-  echo -e "That was only the first answer...>_> Please, retry and type y for yes or n for no\n"; exit 1
+  error "That was only the first answer...>_> Please, retry and type y for yes or n for no\n"; exit 1
 elif [[ $go == 'n' ]]; then
-  echo -e "Mmmm, ok...see you"; exit 0
+  info "Mmmm, ok...see you"; exit 0
 fi
 
-echo -ne "What is the name of the host to add? If it\nis a remote site USE its DOMAIN NAME: "
+question "What is the name of the host to add? If it\nis a remote site USE its DOMAIN NAME: "
 read host
 
 hostconfig=${CONF_DIR}/${host}/host.conf
@@ -26,24 +44,25 @@ function getconf(){
   return 0
 }
 
-echo -ne "Is the host a remote host with rdiff-backup installed? [y] [n]: "
+question "Is the host a remote host with rdiff-backup installed? [y] [n]: "
 read remote
 
 if [[ $remote == 'n' ]]; then
   getconf 0 false
-  echo -ne "Ok, we have to backup a local directory or a\nremote one mounted locally with sshfs? [local] [sshfs]: "
+  question "Ok, we have to backup a local directory or a\nremote one mounted locally with sshfs? [local] [sshfs]: "
   read sshfs
   
   if [[ $sshfs == 'local' ]]; then
     getconf 3 false
     
-    echo -n "Please, specify the path of the directory to backup."
-    echo -n "Start with / and omit the trailing slash."
-    echo -n "ATTENTION! Please DOUBLE escape SLASHES or\nthe script will FAIL! e.g.: \\\/mnt\\\/dir': "
+    info "Please, specify the path of the directory to backup."
+    info "Start with / and omit the trailing slash."
+    waringn 'ATTENTION! Please DOUBLE escape SLASHES or\nthe script will FAIL! e.g.: \\\/mnt\\\/dir: '
+    question "Local path: "
     read path
     
     if [ $path == '' ]; then
-      echo -e "Path was not an optional... Please restart the script now... >_>\n"
+      error "Path was not optional... Please restart the script now... >_>"
       exit 1
     else   
       getconf 2 $path
@@ -52,42 +71,44 @@ if [[ $remote == 'n' ]]; then
   elif [[ $sshfs == 'sshfs' ]]; then
     getconf 3 true
     
-    echo -n "Please, specify the path of the directory to backup."
-    echo -n "Start with / and omit the trailing slash."
-    echo -n "ATTENTION! Please DOUBLE escape SLASHES or\nthe script will FAIL! e.g.: \\\/mnt\\\/dir': "
+    info "Please, specify the path of the directory to backup."
+    info "Start with / and omit the trailing slash."
+    warnign 'ATTENTION! Please DOUBLE escape SLASHES or\nthe script will FAIL! e.g.: \\\/mnt\\\/dir: '
+    question "Local path: "
     read path
     
     if [ $path == '' ]; then
-      echo -e "Path was not an optional... Please restart the script now... >_>\n"
+      error "Path was not optional... Please restart the script now... >_>\n"
       exit 1
     else   
       getconf 2 $path
     fi
     
-    echo -ne "What is the name of the user you want to use\nto mount to the remote dir using sshfs (your ssh user)? "
+    question "What is the name of the user you want to use\nto mount to the remote dir using sshfs (your ssh user)? "
     read user
     
     if [ $user == '' ]; then
-      echo -e "Username was not an optional... Please restart the script now... >_>\n"
+      error "Username was not optional... Please restart the script now... >_>\n"
       exit 1
     else
       getconf 1 $user
     fi
     
-    echo -ne "Do you want (or have) to mount only a\nspecific directory of the remote server?"
-    echo -n "Please, specify the path of the directory"
-    echo -n "Start with / and omit the trailing slash."
-    echo -n "ATTENTION! Please DOUBLE escape SLASHES or\nthe script will FAIL! e.g.: \\\/home\\\/user': "
+    info "Do you want (or have) to mount only a\nspecific directory of the remote server?"
+    info "Please, specify the path of the directory"
+    info "Start with / and omit the trailing slash."
+    warnign "ATTENTION! Please DOUBLE escape SLASHES or\nthe script will FAIL! e.g.: \\\/home\\\/user': "
+    question "Remote path: "
     read rpath
     
     if [ $rpath == '' ]; then
-      echo -e "Path was not an optional... Please restart the script now... >_>\n"
+      error "Path was not optional... Please restart the script now... >_>\n"
       exit 1
     else   
       getconf 4 $rpath
     fi
-  else #in any othe cases
-    echo -e "That was not an optional to follow instructions... Please restart the script now... >_>\n"; exit 1
+  else #in any of the cases
+    error "That was not optional to follow instructions... Please restart the script now... >_>\n"; exit 1
   fi
   
 elif [[ $remote == 'y' ]]; then
@@ -103,5 +124,8 @@ elif [[ $remote == 'y' ]]; then
   fi
 fi
 
-echo -e "All showld be done. Take a look in $hostconfig.\nDo not forget to ssh-copy-id if needed\nand to configure globbing.conf for your needs.\nByeBye"
+success "All showld be done. Take a look in $hostconfig."
+success "Do not forget to ssh-copy-id if needed"
+success  "and to configure globbing.conf for your needs."
+success "ByeBye"
 
