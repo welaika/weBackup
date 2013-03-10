@@ -27,7 +27,7 @@ question "Hi guy! Do  you want to set up a now host backup? [y] [n]: "
 read go
 
 if [[ $go != 'n' ]] && [[ $go != 'y' ]]; then
-  error "That was only the first answer...>_> Please, retry and type y for yes or n for no\n"; exit 1
+  error "That was only the first answer...>_> Please, retry and type y for yes or n for no"; exit 1
 elif [[ $go == 'n' ]]; then
   info "Mmmm, ok...see you"; exit 0
 fi
@@ -78,7 +78,7 @@ if [[ $remote == 'n' ]]; then
     read path
     
     if [ $path == '' ]; then
-      error "Path was not optional... Please restart the script now... >_>\n"
+      error "Path was not optional... Please restart the script now... >_>"
       exit 1
     else   
       getconf 2 $path
@@ -88,7 +88,7 @@ if [[ $remote == 'n' ]]; then
     read user
     
     if [ $user == '' ]; then
-      error "Username was not optional... Please restart the script now... >_>\n"
+      error "Username was not optional... Please restart the script now... >_>"
       exit 1
     else
       getconf 1 $user
@@ -102,22 +102,22 @@ if [[ $remote == 'n' ]]; then
     read rpath
     
     if [ $rpath == '' ]; then
-      error "Path was not optional... Please restart the script now... >_>\n"
+      error "Path was not optional... Please restart the script now... >_>"
       exit 1
     else   
       getconf 4 $rpath
     fi
   else #in any of the cases
-    error "That was not optional to follow instructions... Please restart the script now... >_>\n"; exit 1
+    error "That was not optional to follow instructions... Please restart the script now... >_>"; exit 1
   fi
   
 elif [[ $remote == 'y' ]]; then
   getconf 0 true
-  echo -ne "What is the name of the user you want to use\nto connect to the remote host? "
+  question "What is the name of the user you want to use\nto connect to the remote host? "
   read user
   
   if [ $user == '' ]; then
-    echo -e "Username was not an optional... Please restart the script now... >_>\n"
+    error "Username was not an optional... Please restart the script now... >_>"
     exit 1
   else
     getconf 1 $user
