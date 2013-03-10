@@ -77,7 +77,7 @@ if [[ $remote == 'n' ]]; then
     
     info "Please, specify the path of the directory to backup."
     info "Start with / and omit the trailing slash."
-    waringn "ATTENTION! Please DOUBLE escape SLASHES or"
+    warning "ATTENTION! Please DOUBLE escape SLASHES or"
     warning 'the script will FAIL! e.g.: \\\/mnt\\\/dir: '
     question "Local path: "
     read path
