@@ -67,7 +67,8 @@ read remote
 
 if [[ $remote == 'n' ]]; then
   getconf 0 false
-  question "Ok, we have to backup a local directory or a\nremote one mounted locally with sshfs? [local] [sshfs]: "
+  question "Ok, we have to backup a local directory or a"
+  question "remote one mounted locally with sshfs? [local] [sshfs]: "
   read sshfs
   
   if [[ $sshfs == 'local' ]]; then
@@ -75,7 +76,8 @@ if [[ $remote == 'n' ]]; then
     
     info "Please, specify the path of the directory to backup."
     info "Start with / and omit the trailing slash."
-    waringn 'ATTENTION! Please DOUBLE escape SLASHES or\nthe script will FAIL! e.g.: \\\/mnt\\\/dir: '
+    waringn "ATTENTION! Please DOUBLE escape SLASHES or"
+    warning 'the script will FAIL! e.g.: \\\/mnt\\\/dir: '
     question "Local path: "
     read path
     
@@ -91,7 +93,8 @@ if [[ $remote == 'n' ]]; then
     
     info "Please, specify the path of the directory to backup."
     info "Start with / and omit the trailing slash."
-    warnign 'ATTENTION! Please DOUBLE escape SLASHES or\nthe script will FAIL! e.g.: \\\/mnt\\\/dir: '
+    warnign "ATTENTION! Please DOUBLE escape SLASHES or"
+    warning 'the script will FAIL! e.g.: \\\/mnt\\\/dir: '
     question "Local path: "
     read path
     
@@ -102,7 +105,8 @@ if [[ $remote == 'n' ]]; then
       getconf 2 $path
     fi
     
-    question "What is the name of the user you want to use\nto mount to the remote dir using sshfs (your ssh user)? "
+    question "What is the name of the user you want to use"
+    question "to mount to the remote dir using sshfs (your ssh user)? "
     read user
     
     if [ $user == '' ]; then
@@ -112,10 +116,12 @@ if [[ $remote == 'n' ]]; then
       getconf 1 $user
     fi
     
-    info "Do you want (or have) to mount only a\nspecific directory of the remote server?"
+    info "Do you want (or have) to mount only a"
+    info "specific directory of the remote server?"
     info "Please, specify the path of the directory"
     info "Start with / and omit the trailing slash."
-    warnign "ATTENTION! Please DOUBLE escape SLASHES or\nthe script will FAIL! e.g.: \\\/home\\\/user': "
+    warnign "ATTENTION! Please DOUBLE escape SLASHES or"
+    warnign 'the script will FAIL! e.g.: \\\/home\\\/user: '
     question "Remote path: "
     read rpath
     
@@ -131,7 +137,8 @@ if [[ $remote == 'n' ]]; then
   
 elif [[ $remote == 'y' ]]; then
   getconf 0 true
-  question "What is the name of the user you want to use\nto connect to the remote host? "
+  question "What is the name of the user you want to use"
+  question "to connect to the remote host? "
   read user
   
   if [ $user == '' ]; then
