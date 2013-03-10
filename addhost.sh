@@ -19,7 +19,7 @@ COLOR_LIGHTBLUE=$(tput setaf 4 && tput bold)
 COLOR_LIGHTMAGENTA=$(tput setaf 5 && tput bold)
 COLOR_LIGHTCYAN=$(tput setaf 6 && tput bold)
 COLOR_BOLD=$(tput bold)
-COLOR_RESET=$(tput sgr0
+COLOR_RESET=$(tput sgr0)
 
 # Colorized feedback functions.
 # Helper feedback functions
