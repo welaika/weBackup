@@ -36,7 +36,7 @@ function error() {
   echo "${COLOR_BOLD}${COLOR_RED} **** ${1}${COLOR_RESET}"
 }
 function question() {
-  echo -n "${COLOR_BOLD}${COLOR_BLU}    ? ${1}?${COLOR_RESET} "
+  echo -ne "${COLOR_BOLD}${COLOR_BLU}    ? ${1}?${COLOR_RESET} "
 }
 
 . configure
@@ -50,7 +50,7 @@ elif [[ $go == 'n' ]]; then
   info "Mmmm, ok...see you"; exit 0
 fi
 
-question "What is the name of the host to add? If it"
+question "What is the name of the host to add? If it\n"
 question "is a remote site USE its DOMAIN NAME: "
 read host
 
@@ -68,7 +68,7 @@ read remote
 
 if [[ $remote == 'n' ]]; then
   getconf 0 false
-  question "Ok, we have to backup a local directory or a"
+  question "Ok, we have to backup a local directory or a\n"
   question "remote one mounted locally with sshfs? [local] [sshfs]: "
   read sshfs
   
@@ -106,7 +106,7 @@ if [[ $remote == 'n' ]]; then
       getconf 2 $path
     fi
     
-    question "What is the name of the user you want to use"
+    question "What is the name of the user you want to use\n"
     question "to mount to the remote dir using sshfs (your ssh user)? "
     read user
     
@@ -138,7 +138,7 @@ if [[ $remote == 'n' ]]; then
   
 elif [[ $remote == 'y' ]]; then
   getconf 0 true
-  question "What is the name of the user you want to use"
+  question "What is the name of the user you want to use\n"
   question "to connect to the remote host? "
   read user
   
