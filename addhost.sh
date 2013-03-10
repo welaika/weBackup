@@ -3,6 +3,24 @@
 # At the moment we have no way to control if ssh-keys are well setted
 #+and I don't know if I'll implement this... :s
 
+# Colors for prompt.
+COLOR_RED=$(tput setaf 1)
+COLOR_GREEN=$(tput setaf 2)
+COLOR_YELLOW=$(tput setaf 3)
+COLOR_BLUE=$(tput setaf 4)
+COLOR_MAGENTA=$(tput setaf 5)
+COLOR_CYAN=$(tput setaf 6)
+COLOR_GRAY=$(tput setaf 7)
+COLOR_WHITE=$(tput setaf 7 && tput bold)
+COLOR_LIGHTRED=$(tput setaf 1 && tput bold)
+COLOR_LIGHTGREEN=$(tput setaf 2 && tput bold)
+COLOR_LIGHTYELLOW=$(tput setaf 3 && tput bold)
+COLOR_LIGHTBLUE=$(tput setaf 4 && tput bold)
+COLOR_LIGHTMAGENTA=$(tput setaf 5 && tput bold)
+COLOR_LIGHTCYAN=$(tput setaf 6 && tput bold)
+COLOR_BOLD=$(tput bold)
+COLOR_RESET=$(tput sgr0
+
 # Colorized feedback functions.
 # Helper feedback functions
 function info() {
