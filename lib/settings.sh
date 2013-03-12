@@ -75,7 +75,13 @@ function conf_parser() {
 
     exit 1
   fi
+}
 
+# perhost_conf_parser (  )
+# We use this function to do sanity check on configurations,
+# set defaults, etc. on a per host basis. To be used before
+# the backup of a single host.
+function perhost_conf_parser() {
   # If rpath is not set we default to / (root)
   [[ ${servconf[4]} ]] || servconf=([4]='/')
 

@@ -50,7 +50,7 @@ function backup() {
 	log "Starting backup"
 	backup_delay $DELAY 1
 
-
+  # Start cycle in each configured host
 	for host in `ls $CONF_DIR`
 	do
 	  #Parsing the various hosts, ignore the template file plz
@@ -61,6 +61,7 @@ function backup() {
 	  test_conf_dir $host #test if both per host conf files exists
 	  . ${CONF_DIR}/${host}/host.conf #then source one of them
   	log "Using $host configuration"
+    perhost_conf_parser
 
 	  if ${servconf[0]}; then #if remote
   	  user="${servconf[1]}@" #set the proper username
