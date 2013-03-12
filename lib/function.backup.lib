@@ -60,9 +60,7 @@ function backup() {
 
 	  test_conf_dir $host #test if both per host conf files exists
 	  . ${CONF_DIR}/${host}/host.conf #then source one of them
-	  if [ $DEBUG -eq 1 ]; then
-  	  log "Using $host configuration"
-	  fi
+  	log "Using $host configuration"
 
 	  if ${servconf[0]}; then #if remote
   	  user="${servconf[1]}@" #set the proper username
@@ -72,9 +70,7 @@ function backup() {
 	    #+have an ad hoc username from host.conf
     fi
 	  
-		if [ $VERBOSE -eq 1 ]; then
-			log "Inizio Backup per: $host\n" 1
-		fi
+		log "Inizio Backup per: $host\n" 1
 		
 		##IF DEBUG ONLY (dry-run)
 		if [ $DEBUG -eq 1 ]; then
