@@ -32,28 +32,24 @@ function exec_backup() {
 # The main backup function. Tass!
 function backup() {
 	
+  log "Backup local disk: $BACKUP_DIR"
+	log "Backup local conf: $CONF_DIR"
+	log "Log file         : $LOG"
 
-	if [ $VERBOSE -eq 1 ]; then
-	  log "Backup local disk: $BACKUP_DIR" 1
-		log "Backup local conf: $CONF_DIR" 1
-		log "Log file         : $LOG" 1
-	
-		log "Hosts:"
-		for host in `ls $CONF_DIR`
-		do
-		  #Parsing the various hosts, ignore the template file plz
-		  if [ $host == 'template.tpl' ]; then
-		    continue
-	    fi
-		  test_conf_dir $host
-			log "$host"
-		done
+	log "Hosts:"
+	for host in `ls $CONF_DIR`
+	do
+	  #Parsing the various hosts, ignore the template file plz
+	  if [ $host == 'template.tpl' ]; then
+	    continue
+    fi
+	  test_conf_dir $host
+		log "$host"
+	done
 		
-		echo -n "Startin backup"
-		backup_delay $DELAY 1
-	else
-		backup_delay $DELAY 0
-	fi
+	log "Starting backup"
+	backup_delay $DELAY 1
+
 
 	for host in `ls $CONF_DIR`
 	do
