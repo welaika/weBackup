@@ -3,31 +3,6 @@
 #
 #	Version: 0.5
 
-#
-##  FUNCTION DECLARATION
-#
-
-# Handling function for command line arguments
-function exec_backup() {
-  test_rdiff
-  test_logrotate
-  conf_parser
-  backup
-
-  if [ $VERBOSE -eq 1 ]; then
-    df -h | tee -a $LOG
-  else
-    df -h >> $LOG
-  fi
-  
-  if [ ! $DEBUG -eq 1 ]; then
-    send_mail
-  elif [[ $MAIL -eq 1 ]]; then
-    send_mail
-  fi
-  archive_log
-}
-
 # backup (  )
 # The main backup function. Tass!
 function backup() {
