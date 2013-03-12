@@ -4,19 +4,16 @@
 #+	script per restore ( da fare con molta cautela )
 
 # Load configuration and libraries
+###################################
 if [ ! -e "configure" ]; then
-	echo "*** FATAL ERROR: CONFIGURATION FILES 'configure' CANNOT BE FOUND *** "
-	exit
+	log "*** FATAL ERROR: CONFIGURATION FILES 'configure' CANNOT BE FOUND *** "
+	exit 1
 fi
 
 . configure
 for lib in `ls lib/`; do
 	. lib/$lib
 done
-
-#
-##	CODE
-#
 
 # Working Directory
 WD=$(cd `dirname $0` && pwd)
@@ -33,8 +30,11 @@ MAIL=0
 LOG=$(create_log ${WD}/${LOG_MAIN_DIR})
 
 # test if there are backward compatibility problems
+###################################################
 transitionals
 
+# A sort of getopts
+###################################################
 if [ $# -eq 0 ]; then
 	usage
 fi
@@ -57,3 +57,25 @@ until [[ -z "$1" ]]; do
 	esac
 	shift
 done
+
+# Here We Go!
+###################################################
+function exec_backup() {
+  test_rdiff
+  test_logrotate
+  conf_parser
+  backup
+
+  if [ $VERBOSE -eq 1 ]; then
+    df -h | tee -a $LOG
+  else
+    df -h >> $LOG
+  fi
+  
+  if [ ! $DEBUG -eq 1 ]; then
+    send_mail
+  elif [[ $MAIL -eq 1 ]]; then
+    send_mail
+  fi
+  archive_log
+}
