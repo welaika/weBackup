@@ -16,7 +16,7 @@ function create_log() {
 
 # logdate ( no args )
 # Sets a variable to handle the log lines prefix with [TAG] [date-hour] "
-function logdate(){
+function logdate() {
   today=$(date +%F) #giorno
   ora=$(date +%H:%M:%S) #data
   logtag="[weBackup]"
@@ -27,7 +27,7 @@ function logdate(){
 # test_logrotate( no args )
 # Test if logrotate is installed or warn the user. If installed but not configured
 #+then it print the configuration in the right place...
-function test_logrotate(){
+function test_logrotate() {
   if [[ ! `which logrotate` ]]; then
     log "WARN: logrotate not installed in your system. Please try \"apt-get install logrotate\" to activate log rotation\n" 1 1;
     return 1
@@ -71,10 +71,10 @@ EOT
 # se passato il secondo argomento, allora attiva l'escape dei backspaces sull'echo
 # se la variabile $VERBOSE è uguale a 1 allora stampo anche a video
 # logcmd() serve ad inserire nei log l'output (1 e 2) dei comandi
-function logcmd(){
+function logcmd() {
   [[ $2 ]] && stampa="echo -e" || stampa="echo"
-    logdate >> $LOG
-    $1 >> $LOG 2>&1
+  logdate >> $LOG
+  $1 >> $LOG 2>&1
   [[ $VERBOSE -eq 1 || $DEBUG -eq 1 ]] && (
       logdate
       $stampa $1
@@ -85,7 +85,7 @@ function logcmd(){
 # se passato il secondo argomento, allora attiva l'escape dei backspaces sull'echo
 # se la variabile $VERBOSE è uguale a 1 allora stampo anche a video
 # log() serve ad inserire nei log stringhe di testo arbitrarie
-function log(){
+function log() {
   [[ $2 ]] && stampa="echo -e" || stampa="echo"
     logdate >> $LOG
     $stampa $1 >> $LOG
