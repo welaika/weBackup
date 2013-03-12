@@ -155,11 +155,11 @@ function dest_dir() {
 	
 	if [ -d $dir ]; then
 		if [ $VERBOSE -eq 1 ]; then
-			echo "> Backup directory for host exists" | tee -a $LOG
+			log "> Backup directory for host exists"
 		fi
 	else
 		if [ $VERBOSE -eq 1 ]; then
-			echo "> Backup directory for host does not exists; creating..." | tee -a $LOG
+			log "> Backup directory for host does not exists; creating..."
 		fi
 		
 		mkdir $dir
@@ -169,7 +169,7 @@ function dest_dir() {
 				echo "> Created: "$dir | tee -a $LOG
 			fi
 		else
-			echo "> FAILED! Backup ABORTED ( err: "$?" )" | tee -a $LOG
+			log "> FAILED! Backup ABORTED ( err: "$?" )"
 			exit $?
 		fi
 	fi
