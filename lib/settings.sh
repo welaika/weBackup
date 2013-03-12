@@ -64,6 +64,18 @@ function set_verbose() {
 # set defaults, etc. in one place before starting the
 # main backup() function.
 function conf_parser(){
+
+  # How much hosts have I configured?
+  hosts_conf=$(ls $CONF_DIR | grep -v template.tpl) # we exclude the template from count
+  if [[ ${#hosts_conf[@]} -eq 0 ]]; then # if the count is 0 we have to abort
+    echo ""
+    echo "No host file specified in '$CONF_DIR'"
+    echo "Stopping backup"
+    echo ""
+
+    exit 1
+  fi
+
   # If rpath is not set we default to / (root)
   ${servconf[4]} || servconf[4] = '/'
 

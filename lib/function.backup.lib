@@ -32,13 +32,6 @@ function exec_backup() {
 # The main backup function. Tass!
 function backup() {
 	
-	if [[ ! $(ls -A $CONF_DIR) ]]; then
-		echo ""
-		echo "No host file specified in '$CONF_DIR'"
-		echo "Stopping backup"
-		echo ""
-		exit
-	fi
 
 	if [ $VERBOSE -eq 1 ]; then
 	  log "Backup local disk: $BACKUP_DIR" 1
