@@ -63,7 +63,7 @@ function set_verbose() {
 # We use this function to do sanity check on configurations,
 # set defaults, etc. in one place before starting the
 # main backup() function.
-function conf_parser(){
+function conf_parser() {
 
   # How much hosts have I configured?
   hosts_conf=$(ls $CONF_DIR | grep -v template.tpl) # we exclude the template from count
@@ -77,7 +77,7 @@ function conf_parser(){
   fi
 
   # If rpath is not set we default to / (root)
-  [[ ${servconf[4]} ]] || servconf[4]='/'
+  [[ ${servconf[4]} ]] || servconf=([4]='/')
 
   # If I have a per host retention setting
   if [[ ${servconf[5]} ]]; then
