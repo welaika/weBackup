@@ -40,9 +40,9 @@ function backup() {
 	fi
 
 	if [ $VERBOSE -eq 1 ]; then
-	  log "Backup local disk: $BACKUP_DIR" 1 1
-		log "Backup local conf: $CONF_DIR" 1 1
-		log "Log file         : $LOG" 1 1
+	  log "Backup local disk: $BACKUP_DIR" 1
+		log "Backup local conf: $CONF_DIR" 1
+		log "Log file         : $LOG" 1
 	
 		log "Hosts:"
 		for host in `ls $CONF_DIR`
@@ -52,7 +52,7 @@ function backup() {
 		    continue
 	    fi
 		  test_conf_dir $host
-			log "$host" "" 1
+			log "$host"
 		done
 		
 		echo -n "Startin backup"
@@ -71,7 +71,7 @@ function backup() {
 	  test_conf_dir $host #test if both per host conf files exists
 	  . ${CONF_DIR}/${host}/host.conf #then source one of them
 	  if [ $DEBUG -eq 1 ]; then
-  	  log "Using $host configuration" "" 1
+  	  log "Using $host configuration"
 	  fi
 
 
