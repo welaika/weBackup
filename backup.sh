@@ -65,17 +65,7 @@ function exec_backup() {
   test_logrotate
   conf_parser
   backup
-
-  if [ $VERBOSE -eq 1 ]; then
-    df -h | tee -a $LOG
-  else
-    df -h >> $LOG
-  fi
-  
-  if [ ! $DEBUG -eq 1 ]; then
-    send_mail
-  elif [[ $MAIL -eq 1 ]]; then
-    send_mail
-  fi
+  logcmd "df -h"
+  send_mail
   archive_log
 }
