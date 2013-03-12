@@ -48,14 +48,16 @@ if [[ $go != 'n' ]] && [[ $go != 'y' ]]; then
   error "That was only the first answer...>_> Please, retry and type y for yes or n for no"; exit 1
 elif [[ $go == 'n' ]]; then
   info "Mmmm, ok...see you"; exit 0
+else
+  success "Here we go!"
 fi
 
-question "What is the name of the host to add? If it\n"
-question "is a remote site USE its DOMAIN NAME: "
+question "What is the name of the host to add? If it \n\t is a remote host USE its DOMAIN NAME: "
 read host
 
 hostconfig=${CONF_DIR}/${host}/host.conf
 cp -r $CONF_DIR/template.tpl ${CONF_DIR}/${host}
+success "Creating configuration file in ${CONF_DIR}/${host}"
 
 # getconf ( string array_to_configure, string substitution )
 function getconf(){
@@ -63,22 +65,23 @@ function getconf(){
   return 0
 }
 
-question "Is the host a remote host with rdiff-backup installed? [y] [n]: "
+question "Is the host a remote host? [y] [n]: "
 read remote
 
 if [[ $remote == 'n' ]]; then
   getconf 0 false
-  question "Ok, we have to backup a local directory or a\n"
-  question "remote one mounted locally with sshfs? [local] [sshfs]: "
+  success "Not a remote one"
+  question "So we have to backup a local directory or a\n\t"
+  question "sshfs mounted directory? [local] [sshfs]: "
   read sshfs
   
   if [[ $sshfs == 'local' ]]; then
     getconf 3 false
-    
-    info "Please, specify the path of the directory to backup."
+    success "A local directory!"
+    info "Please, specify its path."
     info "Start with / and omit the trailing slash."
     warning "ATTENTION! Please DOUBLE escape SLASHES or"
-    warning 'the script will FAIL! e.g.: \\\/mnt\\\/dir: '
+    warning 'the script will FAIL! e.g.: \\\/var\\\/www '
     question "Local path: "
     read path
     
@@ -87,15 +90,16 @@ if [[ $remote == 'n' ]]; then
       exit 1
     else   
       getconf 2 $path
+      success "Path setted to $path"
     fi
     
   elif [[ $sshfs == 'sshfs' ]]; then
     getconf 3 true
-    
-    info "Please, specify the path of the directory to backup."
+    success "SSHFS! Also good for us."
+    info "Please, specify the path where it is mounted."
     info "Start with / and omit the trailing slash."
     warnign "ATTENTION! Please DOUBLE escape SLASHES or"
-    warning 'the script will FAIL! e.g.: \\\/mnt\\\/dir: '
+    warning 'the script will FAIL! e.g.: \\\/mnt\\\/dir '
     question "Local path: "
     read path
     
@@ -104,10 +108,10 @@ if [[ $remote == 'n' ]]; then
       exit 1
     else   
       getconf 2 $path
+      success "So your mountpoint is $path"
     fi
     
-    question "What is the name of the user you want to use\n"
-    question "to mount to the remote dir using sshfs (your ssh user)? "
+    question "What is the name of the SSH user you want to use? "
     read user
     
     if [ $user == '' ]; then
@@ -115,12 +119,13 @@ if [[ $remote == 'n' ]]; then
       exit 1
     else
       getconf 1 $user
+      success "We welcome you, $user"
     fi
     
-    info "Do you want (or have) to mount only a"
-    info "specific directory of the remote server?"
+    info "What is the path directory you want to backup?"
     info "Please, specify the path of the directory"
-    info "Start with / and omit the trailing slash."
+    info "Start with / and omit the trailing slash..."
+    info "...unless it is / (root) :)"
     warnign "ATTENTION! Please DOUBLE escape SLASHES or"
     warnign 'the script will FAIL! e.g.: \\\/home\\\/user: '
     question "Remote path: "
@@ -131,6 +136,7 @@ if [[ $remote == 'n' ]]; then
       exit 1
     else   
       getconf 4 $rpath
+      success "Ok: we want to backup $rpath on the remote server!"
     fi
   else #in any of the cases
     error "That was not optional to follow instructions... Please restart the script now... >_>"; exit 1
@@ -138,8 +144,7 @@ if [[ $remote == 'n' ]]; then
   
 elif [[ $remote == 'y' ]]; then
   getconf 0 true
-  question "What is the name of the user you want to use\n"
-  question "to connect to the remote host? "
+  question "What is your SSH user? "
   read user
   
   if [ $user == '' ]; then
@@ -147,11 +152,12 @@ elif [[ $remote == 'y' ]]; then
     exit 1
   else
     getconf 1 $user
+    success "We will connect with: $user@$remote, all right? :)"
   fi
 fi
 
 success "All showld be done. Take a look in $hostconfig."
 success "Do not forget to ssh-copy-id if needed"
-success  "and to configure globbing.conf for your needs."
+success "and to configure globbing.conf for your needs."
 success "ByeBye"
 
