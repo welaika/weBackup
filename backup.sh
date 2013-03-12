@@ -40,7 +40,7 @@ function exec_backup() {
   test_logrotate
   conf_parser
   backup
-  log "$(df -h)"
+  log "\n$(df -h)" 1
   send_mail
   archive_log
 }
