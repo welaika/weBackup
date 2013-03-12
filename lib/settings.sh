@@ -86,8 +86,8 @@ function perhost_conf_parser() {
   # If remote is not set we consider it false
   [[ ${servconf[0]} ]] || servconf[0]=false
 
-  # If sshfs is not set we consider it false
-  [[ ${servconf[3]} ]] || servconf[3]=false
+  # If sshfs is not set or has wrong value we consider it false
+  if [[ ${servconf[3]} != 'local' && ${servconf[3]} != 'sshfs' && ${servconf[3]} != false ]]; then servconf[3]=false
   
   # If rpath is not set we default to / (root)
   [[ ${servconf[4]} ]] || servconf[4]='/'
