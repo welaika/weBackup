@@ -55,7 +55,7 @@ fi
 question "What is the name of the host to add? If it \n\t is a remote host you MUST use its FQDN or IP: "
 read host
 
-if [[ -f  ${CONF_DIR}/${host}/host.conf ]]
+if [[ -f  ${CONF_DIR}/${host}/host.conf ]]; then
   error "Hey! We have another host named $host. You have to choose another."
   exit 1
 else
