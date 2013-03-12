@@ -77,7 +77,7 @@ function backup() {
       dry_run
     ## ELSE IT IS REAL BACKUP
     else
-			dest_dir $host
+			test_dest_dir $host
 		  # If my dir is a sshfsmounted dir than handle mount
 		  #+operations with the proper function
 		  if ${servconf[3]}; then
@@ -141,10 +141,10 @@ function test_conf_dir(){
   return 0
 }
 
-# dest_dir ( string name )
+# test_dest_dir ( string name )
 # Test if backup destination directory exists and if not
 #+create it.
-function dest_dir() {
+function test_dest_dir() {
 	local dir=${BACKUP_DIR}/${1}
 	
 	if [ -d $dir ]; then
