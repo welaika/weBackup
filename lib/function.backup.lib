@@ -78,19 +78,16 @@ function backup() {
     ## ELSE IT IS REAL BACKUP
     else
 			dest_dir $host
-		  #If remote
-			if ${servconf[0]}; then
+		  # If my dir is a sshfsmounted dir than handle mount
+		  #+operations with the proper function
+		  if ${servconf[3]}; then
+        mount_sshfs || continue
+  		  logcmd "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host}"
+  			logcmd "rdiff-backup --force --remove-older-than ${__ret} ${BACKUP_DIR}/${host}"
+      # else if is remote or a local directory
+      else
         logcmd "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${user}${host}::${servconf[4]} ${BACKUP_DIR}/${host}"
-			  logcmd "rdiff-backup --force --remove-older-than ${__ret} ${BACKUP_DIR}/${host}"
-			#else if local
-			else
-			  # If my dir is a sshfsmounted dir than handle mount
-			  #+operations with the proper function
-			  if ${servconf[3]}; then
-          if ! mount_sshfs; then continue; fi 
-        fi
-			  logcmd "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host}"
-				logcmd "rdiff-backup --force --remove-older-than ${__ret} ${BACKUP_DIR}/${host}"
+        logcmd "rdiff-backup --force --remove-older-than ${__ret} ${BACKUP_DIR}/${host}"
       fi
 		fi
 		
