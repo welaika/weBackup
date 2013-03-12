@@ -76,8 +76,7 @@ read remote
 if [[ $remote == 'n' ]]; then
   getconf 0 false
   success "Not a remote one"
-  question "So we have to backup a local directory or a\n\t"
-  question "sshfs mounted directory? [local] [sshfs]: "
+  question "So we have to backup a local directory or a \n\t sshfs mounted directory? [local] [sshfs]: "
   read sshfs
   
   if [[ $sshfs == 'local' ]]; then
