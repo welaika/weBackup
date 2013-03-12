@@ -33,31 +33,6 @@ LOG=$(create_log ${WD}/${LOG_MAIN_DIR})
 ###################################################
 transitionals
 
-# A sort of getopts
-###################################################
-if [ $# -eq 0 ]; then
-	usage
-fi
-
-# attende l'input ed esegue l'azione selezionata
-until [[ -z "$1" ]]; do
-	case "$1" in
-		"--backup") 	exec_backup ;;
-		"-b") 				exec_backup ;;
-		"--debug") 		set_debug ;;
-		"-d") 				set_debug ;;
-		"--help") 		usage ;;
-		"-h") 				usage ;;
-		"--mail") 		set_mail ;;
-		"-m") 				set_mail ;;
-		"--verbose")	set_verbose ;;
-		"-v") 				set_verbose ;;
-		"--version") 	print_version ;;
-		*) 						usage ;;
-	esac
-	shift
-done
-
 # Here We Go!
 ###################################################
 function exec_backup() {
@@ -65,7 +40,33 @@ function exec_backup() {
   test_logrotate
   conf_parser
   backup
-  logcmd "df -h"
+  log "$(df -h)"
   send_mail
   archive_log
 }
+
+# A sort of getopts
+###################################################
+if [ $# -eq 0 ]; then
+  usage
+fi
+
+# attende l'input ed esegue l'azione selezionata
+until [[ -z "$1" ]]; do
+  case "$1" in
+    "--backup")   exec_backup ;;
+    "-b")         exec_backup ;;
+    "--debug")    set_debug ;;
+    "-d")         set_debug ;;
+    "--help")     usage ;;
+    "-h")         usage ;;
+    "--mail")     set_mail ;;
+    "-m")         set_mail ;;
+    "--verbose")  set_verbose ;;
+    "-v")         set_verbose ;;
+    "--version")  print_version ;;
+    *)            usage ;;
+  esac
+  shift
+done
+
