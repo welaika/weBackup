@@ -135,15 +135,15 @@ function backup() {
 # test_rdiff (  )
 # Have we rdiff-backup installed?
 function test_rdiff() {
-  which rdiff-backup || (
-      log "Hey! It seems that you have not installed rdiff-backup yet!"
-      log "It should be as easy as"
-      log "  apt-get install rdiff-backup"
-      log "or, if in Fedora family after enabled EPEL repos"
-      log "  yum install rdiff-backup\n\n" 1
+  if [[ ! `which rdiff-backup` ]]; then
+    log "Hey! It seems that you have not installed rdiff-backup yet!"
+    log "It should be as easy as"
+    log "  apt-get install rdiff-backup"
+    log "or, if in Fedora family after enabled EPEL repos"
+    log "  yum install rdiff-backup\n\n" 1
 
-      exit 1
-    )
+    exit 1
+  fi
 }
 
 # test_conf_dir ( host )
