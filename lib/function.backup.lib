@@ -91,7 +91,7 @@ function backup() {
         logcmd "rdiff-backup --force --remove-older-than ${__ret} ${BACKUP_DIR}/${host}"
       # last option is a local directory
       else
-        log "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host}"
+        logcmd "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host}"
   			logcmd "rdiff-backup --force --remove-older-than ${__ret} ${BACKUP_DIR}/${host}"
       fi
     fi
