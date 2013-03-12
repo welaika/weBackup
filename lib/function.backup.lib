@@ -154,25 +154,18 @@ function dest_dir() {
 	local dir=${BACKUP_DIR}/${1}
 	
 	if [ -d $dir ]; then
-		if [ $VERBOSE -eq 1 ]; then
-			log "> Backup directory for host exists"
-		fi
+  	log "> Backup directory for host exists"
 	else
-		if [ $VERBOSE -eq 1 ]; then
-			log "> Backup directory for host does not exists; creating..."
-		fi
-		
-		mkdir $dir
+		log "> Backup directory for host does not exists; creating..."
+		mkdir -p $dir
 		
 		if [ -d $dir ]; then
-			if [ $VERBOSE -eq 1 ]; then
-				echo "> Created: "$dir | tee -a $LOG
-			fi
+			log "> Created: $dir"
 		else
 			log "> FAILED! Backup ABORTED ( err: "$?" )"
 			exit $?
 		fi
-	fi
+  fi
 	
 	return 0
 }
