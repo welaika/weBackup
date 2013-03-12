@@ -59,7 +59,11 @@ function set_verbose() {
   VERBOSE=1
 }
 
-function constructor(){
+# conf_parser (  )
+# We use this function to do sanity check on configurations,
+# set defaults, etc. in one place before starting the
+# main backup() function.
+function conf_parser(){
   # If rpath is not set we default to / (root)
   ${servconf[4]} || servconf[4] = '/'
 

@@ -11,7 +11,7 @@
 function exec_backup() {
   test_rdiff
   test_logrotate
-  constructor
+  conf_parser
   backup
 
   if [ $VERBOSE -eq 1 ]; then
