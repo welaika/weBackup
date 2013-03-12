@@ -111,7 +111,6 @@ function backup() {
 			if ${servconf[0]}; then
         logcmd "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${user}${host}::${servconf[4]} ${BACKUP_DIR}/${host}"
 			  logcmd "rdiff-backup --force --remove-older-than ${__ret} ${BACKUP_DIR}/${host}"
-      fi
 			#else if local
 			else
 			  # If my dir is a sshfsmounted dir than handle mount
@@ -121,6 +120,7 @@ function backup() {
         fi
 			  logcmd "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host}"
 				logcmd "rdiff-backup --force --remove-older-than ${__ret} ${BACKUP_DIR}/${host}"
+      fi
 		fi
 		
 		# If we have $mounted true, so we have to unmount the dir
