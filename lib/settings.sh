@@ -77,7 +77,7 @@ function conf_parser(){
   fi
 
   # If rpath is not set we default to / (root)
-  ${servconf[4]} || servconf[4] = '/'
+  [[ ${servconf[4]} ]] || servconf[4]='/'
 
   # If I have a per host retention setting
   if [[ ${servconf[5]} ]]; then
