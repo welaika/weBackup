@@ -3,20 +3,28 @@ of our poor memory. So don't expect a lot of infos here ;)
 
 Mar2013
 -------
+
+Mostly a refactor, but also with some features. But also better coding
+is a serius feature!
+
 * remote basedir is now configurable in host.conf
 * now functions libraries are more modular and splitted in significant files
 * implemented some sanity check on host.conf parameters
 * comments in host.conf reviewd (more to come here)
 * good refactorization
-** much more linear logic
-** much less awful symbols and non semantic functions
-** much less readable code. You can read backup.sh and comprehend it ;)
-** log and logcmd functions now handle internally VERBOSE output
+  * much more linear logic
+  * much less awful symbols and non semantic functions
+  * much less readable code. You can read backup.sh and comprehend it ;)
+  * log and logcmd functions now handle internally VERBOSE output
 * VERSBOSE has changed rules: quite all is always logged, if VERBOSE
   is also printed on STOUD. Just as you expect I think
 * now retention is all customizable also with time units
 * fixed bugs in debug flow
 * when first run, now all dir should be correctly created if not present
+
+##### Upcoming
+
+* new and easier comments and texts in host.conf and in addhost.sh
 
 
 Gen2012
@@ -36,11 +44,11 @@ Overall we've pushed some sweet new code in the mail sender
 function, so that it handle sending mail with external SMTP with
 authentication out of the box. If configuration is present in "configure" file
 
-  #EXTERNAL SMTP CONFIGS
-  SMTP_HOST=""
-  SMTP_USER=""
-  SMTP_PASSWORD=""
-  SMTP_AUTH=""
+    #EXTERNAL SMTP CONFIGS
+    SMTP_HOST=""
+    SMTP_USER=""
+    SMTP_PASSWORD=""
+    SMTP_AUTH=""
 
 they will be used. We encourage you to use them and not relay on the
 local system mail sender.
