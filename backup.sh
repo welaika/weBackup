@@ -30,7 +30,7 @@ DEBUG=0
 VERBOSE=0
 MAIL=0
 
-LOG=$(create_log ${WD}/${LOG_MAIN_DIR} "" "" $LOG_EXTENSION)
+LOG=$(create_log ${WD}/${LOG_MAIN_DIR})
 
 # test if there are backward compatibility problems
 transitionals
