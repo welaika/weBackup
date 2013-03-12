@@ -74,20 +74,7 @@ function backup() {
 		
 		##IF DEBUG ONLY (dry-run)
 		if [ $DEBUG -eq 1 ]; then
-      if ${servconf[0]}; then #if remote
-        log "TESTING $host"
-        log "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::/ ${BACKUP_DIR}/${host}"
-        logcmd "rdiff-backup --test-server ${user}${host}::/"
-      else #if local
-        if ${servconf[3]}; then #if a remotely mounted sshfs filesystem
-          mount_sshfs ${user}${host}::/ ${servconf[2]}
-        fi
-        log "TESTING mountpoint /mnt/$host"
-        mountpoint ${servconf[2]} > /dev/null
-        if [[ $? != 0 ]]; then
-          log "ERROR: mount of the remote filesystem went bad; problem probably genereted remotly. Aborting"
-        fi
-      fi
+      dry_run
     ## ELSE IT IS REAL BACKUP
     else
 			dest_dir $host
@@ -115,6 +102,21 @@ function backup() {
 		  unset mounted
 	  fi
 	done
+}
+
+function dry_run() {
+  if ${servconf[3]}; then #if a remotely mounted sshfs filesystem
+    mount_sshfs ${user}${host}::${servconf[4]} ${servconf[2]}
+    log "TESTING mountpoint /mnt/$host"
+    mountpoint ${servconf[2]} > /dev/null
+    if [[ $? != 0 ]]; then #let's look the exit status
+      log "ERROR: mount of the remote filesystem went bad; problem probably genereted remotly. Aborting"
+    fi
+  else #if remote or local directory
+    log "TESTING $host"
+    log "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::${servconf[4]} ${BACKUP_DIR}/${host}"
+    logcmd "rdiff-backup --test-server ${user}${host}::${servconf[4]}"
+  fi
 }
 
 # test_rdiff (  )
