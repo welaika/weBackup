@@ -52,12 +52,17 @@ else
   success "Here we go!"
 fi
 
-question "What is the name of the host to add? If it \n\t is a remote host USE its DOMAIN NAME: "
+question "What is the name of the host to add? If it \n\t is a remote host you MUST use its FQDN or IP: "
 read host
 
-hostconfig=${CONF_DIR}/${host}/host.conf
-cp -r $CONF_DIR/template.tpl ${CONF_DIR}/${host}
-success "Creating configuration file in ${CONF_DIR}/${host}"
+if [[ -f  ${CONF_DIR}/${host}/host.conf ]]
+  error "Hey! We have another host named $host. You have to choose another."
+  exit 1
+else
+  hostconfig=${CONF_DIR}/${host}/host.conf
+  cp -r $CONF_DIR/template.tpl ${CONF_DIR}/${host}
+  success "Creating configuration file in ${CONF_DIR}/${host}"
+fi
 
 # getconf ( string array_to_configure, string substitution )
 function getconf(){
