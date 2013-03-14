@@ -10,6 +10,7 @@
   MAIL_FROM=''
 
 #EXTERNAL SMTP CONFIGS
+# If not setted, we'll use your system's "mail" command to send out
   SMTP_HOST=""
   SMTP_USER=""
   SMTP_PASSWORD=""
