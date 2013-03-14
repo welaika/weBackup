@@ -2,11 +2,6 @@
 
 #### Wraps rdiff-backup and manage multiple host backup to add and remove them easily.
 
-WHAT CAN WE DO
---------------
-
-ToDo
-
 HOW TO - INSTALL
 ----------------
 
