@@ -6,6 +6,7 @@
 function transitionals(){
   tr__perhostretention
   tr__retentionsyntax
+  tr__updatehostconf
   return 0
 }
 
@@ -38,7 +39,7 @@ EOT
   done
 }
 
-function tr__retentionsyntax(){
+function tr__retentionsyntax() {
   for host in $HOSTS; do
     . ${CONF_DIR}/${host}/host.conf
     [[ ${servconf[5]} =~ ^[0-9]+$ ]] && (
@@ -51,5 +52,22 @@ put W as unit as it stands for weeks
 EOT
       log "$message" 1
     )
+  done
+}
+
+function tr__updatehostconf() {
+  hosts=(`ls ${CONF_DIR}`)
+  [[ ${hosts[0]} == 'template.tpl' ]] && testhost=${hosts[1]} || testhost=${hosts[0]}
+  [[ diff <(cat conf/${testhost}/host.conf | egrep -v '^\[.*') <(cat conf/template.tpl/host.conf | egrep -v '^\[.*') ]] && return
+
+  for host in $HOSTS; do
+    [[ $host == 'template.tpl' ]] && continue;
+    arrayConf=(`cat conf/${testhost}/host.conf | egrep '^\[.*'`)
+    mv ${CONF_DIR}/$host/host.conf ${CONF_DIR}/$host/host.conf.$(date +%F)
+    cp ${CONF_DIR}/template.tpl/host.conf ${CONF_DIR}/$host/host.conf
+
+    for element in ${arrayConf[@]}; do
+      sed -i "s/${element:0:4}/$element" ${CONF_DIR}/$host/host.conf
+    done
   done
 }
