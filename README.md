@@ -47,14 +47,11 @@ A changelog bad emulation
     │   ├── example.com
     │   │   ├── globbing.conf
     │   │   ├── host.conf
-    │   │   └── template.tpl
-    │   │       ├── globbing.conf
-    │   │       └── host.conf
     │   └── template.tpl
     │       ├── globbing.conf
     │       └── host.conf
 
-The addhost.sh produces host configuration in thi directory. Each subdir
+The addhost.sh produces host configuration in this directory. Each subdir
 is a host. You can rename a dir hiding it (e.g.: .example.com) to disable
 backups for that host.
 For each subdir we have two configuration files. We'll tell more about them
@@ -77,7 +74,7 @@ These are libraries of bash functions.
     │   └── weBackup.log
 
 Logs. The script will try to automatically configure logrotate to handle
-log rotation inside thi folder
+log rotation inside this folder
 
     └── README.md
 
