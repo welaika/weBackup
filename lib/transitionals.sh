@@ -56,16 +56,24 @@ EOT
 }
 
 function tr__updatehostconf() {
+  # Our hosts in an array
   hosts=(`ls ${CONF_DIR}`)
+  # If the first host is template.tpl, use the second doing the check
   [[ ${hosts[0]} == 'template.tpl' ]] && testhost=${hosts[1]} || testhost=${hosts[0]}
+  # If the checked host's host.conf is identical to the template one, then leave function.
+  #+configurations values are not checked here: just texts. We consider that the order of
+  #+confs is fixed forever...and thay are actually
   [[ `diff <(cat conf/${testhost}/host.conf | egrep -v '^\[.*') <(cat conf/template.tpl/host.conf | egrep -v '^\[.*')` ]] || return
 
-  for host in $HOSTS; do
-    [[ $host == 'template.tpl' ]] && continue;
+  for host in $HOSTS; do #the update
+    [[ $host == 'template.tpl' ]] && continue; # leave if template
+    #User configurations are saved in array
     arrayConf=(`cat conf/${testhost}/host.conf | egrep '^\[.*'`)
+    #host.conf is updated
     mv ${CONF_DIR}/$host/host.conf ${CONF_DIR}/$host/host.conf.$(date +%F)
     cp ${CONF_DIR}/template.tpl/host.conf ${CONF_DIR}/$host/host.conf
 
+    #User configurations are reported in the updated file
     for element in ${arrayConf[@]}; do
       sed -i "s/${element:0:4}/$element" ${CONF_DIR}/$host/host.conf
     done
