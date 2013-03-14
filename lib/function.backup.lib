@@ -59,15 +59,15 @@ function backup() {
 		  if ${servconf[3]}; then
         mount_sshfs || continue
   		  logcmd "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host}"
-        logcmd "rdiff-backup --force --remove-older-than ${__ret} ${BACKUP_DIR}/${host}"
+        delete_older ${host}
       # else if is remote
       elif ${servconf[0]}; then
         logcmd "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${user}${host}::${servconf[4]} ${BACKUP_DIR}/${host}"
-        logcmd "rdiff-backup --force --remove-older-than ${__ret} ${BACKUP_DIR}/${host}"
+        delete_older ${host}
       # last option is a local directory
       else
         logcmd "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host}"
-  			logcmd "rdiff-backup --force --remove-older-than ${__ret} ${BACKUP_DIR}/${host}"
+        delete_older ${host}
       fi
     fi
     
@@ -99,6 +99,13 @@ function dry_run() {
     log "TESTING $host"
     log "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host}"
   fi
+}
+
+# delete_older ( $host )
+# Execs rdiff-backup --remove-older-than ${__ret} for the specified $host
+function delete_older() {
+  [[ $1 ]] || log "ERROR: Function delete_older() needs an argument"; return;
+  [[ $DELETEOLDER ]] && logcmd "rdiff-backup --force --remove-older-than ${__ret} ${BACKUP_DIR}/$1"
 }
 
 # test_rdiff (  )
