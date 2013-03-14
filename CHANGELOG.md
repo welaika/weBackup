@@ -22,10 +22,8 @@ is a serius feature!
 * fixed bugs in debug flow
 * when first run, now all dir should be correctly created if not present
 * heavy rewritten README.md: more explanatory and complete
-
-##### Upcoming
-
-* new and easier comments and texts in host.conf and in addhost.sh
+* now if updated host.conf template, all the files will be updated. Obviusly
+  configurations will be maintained ;)
 
 
 Gen2012
