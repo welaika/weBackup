@@ -18,7 +18,7 @@ function backup() {
 	  if [ $host == 'template.tpl' ]; then
 	    continue
     fi
-	  test_conf_dir $host
+	  test_conf_dir $host || continue
 		log "$host"
 	done
 		
@@ -33,7 +33,7 @@ function backup() {
 	    continue
     fi
 
-	  test_conf_dir $host #test if both per host conf files exists
+	  test_conf_dir $host || continue #test if both per host conf files exists
 	  . ${CONF_DIR}/${host}/host.conf #then source one of them
   	log "Using $host configuration"
     perhost_conf_parser
@@ -127,7 +127,7 @@ function test_rdiff() {
 function test_conf_dir(){
   if [ ! -f ${CONF_DIR}/$1/globbing.conf ] || [ ! -f ${CONF_DIR}/$1/host.conf ]; then
     log "Missing configuration files for host ${1}. Aborting"
-    exit 1
+    return 1
   fi
   
   return 0
