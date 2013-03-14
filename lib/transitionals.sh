@@ -70,7 +70,9 @@ function tr__updatehostconf() {
 
     #User configurations are reported in the updated file
     for element in ${arrayConf[@]}; do
-      sed -i "s/${element:0:4}/$element/" ${CONF_DIR}/$host/host.conf
+      element=${element//[/\\[}
+      element=${element//]/\\]}
+      sed -i "s/${element:0:6}/$element/" ${CONF_DIR}/$host/host.conf
     done
   done
 }
