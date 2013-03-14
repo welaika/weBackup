@@ -21,6 +21,7 @@ is a serius feature!
 * now retention is all customizable also with time units
 * fixed bugs in debug flow
 * when first run, now all dir should be correctly created if not present
+* heavy rewritten README.md: more explanatory and complete
 
 ##### Upcoming
 
