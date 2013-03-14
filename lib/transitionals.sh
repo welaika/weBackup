@@ -58,7 +58,7 @@ EOT
 function tr__updatehostconf() {
   hosts=(`ls ${CONF_DIR}`)
   [[ ${hosts[0]} == 'template.tpl' ]] && testhost=${hosts[1]} || testhost=${hosts[0]}
-  [[ diff <(cat conf/${testhost}/host.conf | egrep -v '^\[.*') <(cat conf/template.tpl/host.conf | egrep -v '^\[.*') ]] && return
+  [[ `diff <(cat conf/${testhost}/host.conf | egrep -v '^\[.*') <(cat conf/template.tpl/host.conf | egrep -v '^\[.*')` ]] && return
 
   for host in $HOSTS; do
     [[ $host == 'template.tpl' ]] && continue;
