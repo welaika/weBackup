@@ -38,6 +38,9 @@ function backup() {
   	log "Using $host configuration"
     perhost_conf_parser
 
+    # comment needed
+    test_frequency || continue
+
 	  if ${servconf[0]}; then #if remote
   	  user="${servconf[1]}@" #set the proper username
 	  else #if local
@@ -214,5 +217,21 @@ function mount_sshfs(){
     fi
   fi
   return 0
+}
+
+function test_frequency() {
+  frequency_class=${servconf[6]}
+  1h=$((60 * 60))
+  lastbkp=`cat ${CONF_DIR}/${host}/.last`
+  now=$(date +%s)
+
+  if [[ $frequency_class == 'day' ]]; then
+    [[ $(( $now - $lastbkp )) -gt $((${1h} * 24)) ]] && return 0 || return 1
+  elif [[ $frequency_class == 'halfaday' ]]; then
+    [[ $(( $now - $lastbkp )) -gt $((${1h} * 12)) ]] && return 0 || return 1
+  elif [[ $frequency_class == 'hour' ]]; then
+    [[ $(( $now - $lastbkp )) -gt ${1h} ]] && return 0 || return 1
+  fi
+    
 }
 

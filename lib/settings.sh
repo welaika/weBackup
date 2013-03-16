@@ -101,5 +101,8 @@ function perhost_conf_parser() {
     __ret=${RETENTION}
   fi
 
+  #comment needed
+  if [[ ${servconf[6]} != 'day' && ${servconf[6]} != 'halfaday' && ${servconf[6]} != 'hour' ]]; then servconf[6]='day'; fi
+
   return 0
 }

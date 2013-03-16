@@ -97,7 +97,7 @@ function log() {
 
 # sendmail (  )
 function send_mail() {
-  if [[ $DEBUG -eq 1 ||  $MAIL -ne 1 ]]; then return 0; fi
+  if [[ $DEBUG -eq 1 || $MAIL -ne 1 ]]; then return 0; fi
 
   for mail in ${MAIL_ADDR[*]}
   	do
