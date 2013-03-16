@@ -66,7 +66,7 @@ fi
 
 # getconf ( string array_to_configure, string substitution )
 function getconf(){
-  sed -i "s/^\[$1\]=$/\[$1\]=$2/" $hostconfig
+  sed -i "s|^\[$1\]=$|\[$1\]=$2|" $hostconfig
   return 0
 }
 
@@ -84,8 +84,6 @@ if [[ $remote == 'n' ]]; then
     success "A local directory!"
     info "Please, specify its path."
     info "Start with / and omit the trailing slash."
-    warning "ATTENTION! Please DOUBLE escape SLASHES or"
-    warning 'the script will FAIL! e.g.: \\\/var\\\/www '
     question "Local path: "
     read path
     
@@ -102,8 +100,6 @@ if [[ $remote == 'n' ]]; then
     success "SSHFS! Also good for us."
     info "Please, specify the path where it is mounted."
     info "Start with / and omit the trailing slash."
-    warnign "ATTENTION! Please DOUBLE escape SLASHES or"
-    warning 'the script will FAIL! e.g.: \\\/mnt\\\/dir '
     question "Local path: "
     read path
     
@@ -130,8 +126,6 @@ if [[ $remote == 'n' ]]; then
     info "Please, specify the path of the directory"
     info "Start with / and omit the trailing slash..."
     info "...unless it is / (root) :)"
-    warnign "ATTENTION! Please DOUBLE escape SLASHES or"
-    warnign 'the script will FAIL! e.g.: \\\/home\\\/user: '
     question "Remote path: "
     read rpath
     
