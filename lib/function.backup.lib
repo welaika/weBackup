@@ -104,7 +104,10 @@ function dry_run() {
 # delete_older ( $host )
 # Execs rdiff-backup --remove-older-than ${__ret} for the specified $host
 function delete_older() {
-  [[ $1 ]] || log "ERROR: Function delete_older() needs an argument"; return;
+  if [[ ! $1 ]]; then
+    log "ERROR: Function delete_older() needs an argument"
+    return
+  fi
   [[ $DELETEOLDER ]] && logcmd "rdiff-backup --force --remove-older-than ${__ret} ${BACKUP_DIR}/$1"
 }
 
