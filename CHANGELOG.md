@@ -1,7 +1,18 @@
 This is a ChangeLog...almost. We track only big changes in help
 of our poor memory. So don't expect a lot of infos here ;)
 
-Mar2013
+
+1.5.1
+-----
+
+*   22467bf (HEAD, 1.5.1, origin/master, origin/HEAD, master) Merge branch '1.5fixes1' [Alessandro Fazzi]
+|\  
+| * c7b6a77 (1.5fixes1) alternative sed separators [Alessandro Fazzi]
+| * 1f937c6 take back mailouts if requested alsa in debug mode [Alessandro Fazzi]
+| * a61f7ca fixed serious bug in sed substitution [Alessandro Fazzi]
+| * ad10fd3 this was returning whatsoever. fixed [Alessandro Fazzi]
+
+1.5
 -------
 
 Mostly a refactor, but also with some features. But also better coding
