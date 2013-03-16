@@ -72,7 +72,7 @@ function tr__updatehostconf() {
     for element in ${arrayConf[@]}; do
       element=${element//[/\\[}
       element=${element//]/\\]}
-      sed -i "s/${element:0:6}/$element/" ${CONF_DIR}/$host/host.conf
+      sed -i "s|^${element:0:6}|$element|" ${CONF_DIR}/$host/host.conf
     done
   done
 }
