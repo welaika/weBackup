@@ -1,12 +1,12 @@
 #!/bin/bash
-#	Backup function library for weBackup 
+#	Backup function library for weBackup
 #
 #	Version: 0.5
 
 # backup (  )
 # The main backup function. Tass!
 function backup() {
-	
+
   log "Backup local disk: $BACKUP_DIR"
 	log "Backup local conf: $CONF_DIR"
 	log "Log file         : $LOG"
@@ -21,7 +21,7 @@ function backup() {
 	  test_conf_dir $host || continue
 		log "$host"
 	done
-		
+
 	log "Starting backup"
 	backup_delay $DELAY 1
 
@@ -45,9 +45,9 @@ function backup() {
 	    # For remotly mounted sshfs file systems we'll
 	    #+have an ad hoc username from host.conf
     fi
-	  
+
 		log "Inizio Backup per: $host\n" 1
-		
+
 		##IF DEBUG ONLY (dry-run)
 		if [ $DEBUG -eq 1 ]; then
       dry_run
@@ -70,7 +70,7 @@ function backup() {
         delete_older ${host}
       fi
     fi
-    
+
     # If we have $mounted true, so we have to unmount the dir
     if [[ $mounted ]]; then
       `which fusermount` -u ${servconf[2]}
@@ -92,7 +92,7 @@ function dry_run() {
   #if remote
   elif ${servconf[0]}; then
     log "TESTING $host"
-    log "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf --exclude / ${user}${host}::${servconf[4]} ${BACKUP_DIR}/${host}"
+    log "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${user}${host}::${servconf[4]} ${BACKUP_DIR}/${host}"
     logcmd "rdiff-backup --test-server ${user}${host}::${servconf[4]}"
   # last option is a local directory
   else
@@ -132,7 +132,7 @@ function test_conf_dir(){
     log "Missing configuration files for host ${1}. Aborting"
     return 1
   fi
-  
+
   return 0
 }
 
@@ -141,13 +141,13 @@ function test_conf_dir(){
 #+create it.
 function test_dest_dir() {
 	local dir=${BACKUP_DIR}/${1}
-	
+
 	if [ -d $dir ]; then
   	log "> Backup directory for host exists"
 	else
 		log "> Backup directory for host does not exists; creating..."
 		mkdir -p $dir
-		
+
 		if [ -d $dir ]; then
 			log "> Created: $dir"
 		else
@@ -155,7 +155,7 @@ function test_dest_dir() {
 			exit $?
 		fi
   fi
-	
+
 	return 0
 }
 
@@ -163,7 +163,7 @@ function test_dest_dir() {
 function backup_delay() {
 	local delay_time=$1
 	local stdout=$2
-	
+
 	for i in `seq $delay_time -1 1`
 	do
 		if [ $stdout -eq 1 ]; then
@@ -171,7 +171,7 @@ function backup_delay() {
 		fi
 		sleep 1
 	done
-	
+
 	if [ $stdout -eq 1 ]; then
 		echo -e "\n"
 	fi
@@ -187,7 +187,7 @@ function mount_sshfs(){
         log "FATAL: sshfs is not installed on the system. Aborting... \n try apt-get install sshfs" 1
         return 1
       fi
-      
+
       if [[ ! -d ${servconf[2]} ]]; then mkdir ${servconf[2]}; fi
 
       # If at this point for any reason of the hell the mountpoint is already mounted, unmount it
@@ -196,9 +196,9 @@ function mount_sshfs(){
         `which fusermount` -u ${servconf[2]};
         log "Unmounted ${servconf[2]}: it was already mounted for some reason"
       fi
-      
+
       `which sshfs` ${servconf[1]}@${host}:${servconf[4]} ${servconf[2]} -C
-      
+
       if [[ $? != 0 ]]; then
         log "FATAL: mount of the remote filesystem went bad; problem probably genereted remotly. Aborting"
         return 1
