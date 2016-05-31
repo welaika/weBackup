@@ -20,7 +20,7 @@ function logdate() {
   today=$(date +%F) #giorno
   ora=$(date +%H:%M:%S) #data
   logtag="[weBackup]"
-  
+
   echo -n "$logtag [$today-$ora] "
 }
 
@@ -33,7 +33,7 @@ function test_logrotate() {
     return 1
   fi
   if [ ! -f "/etc/logrotate.d/weBackup" ]; then
-    if [ -d "/etc/logrotate.d" ]; then  
+    if [ -d "/etc/logrotate.d" ]; then
       log "WARN: logrotate configuration not present. We are creating it at /etc/logrotate.d/weBackup\n" 1 1
         cat <<EOT > /etc/logrotate.d/weBackup
 ${WD}/${LOG_MAIN_DIR}/*.log {
@@ -60,10 +60,10 @@ ${WD}/${LOG_MAIN_DIR}/*.log {
 }
 EOT
     return 1
-    
+
     fi
   fi
-  
+
   return 0
 }
 
@@ -93,6 +93,28 @@ function log() {
       logdate
       $stampa "$1"
     )
+}
+
+function hipchat_notification() {
+  [[$HC_ROOM_NAME]] || return 0; #silently return if room name is not set
+
+  COMMAND_EXIT_STATUS = $1
+  HOST = $2
+
+  if [[$COMMAND_EXIT_STATUS -eq 0]]; then
+    COLOR = 'green'
+    MESSAGE = "Backup di $HOST terminato con successo"
+  else
+    COLOR = 'red'
+    MESSAGE = "Sembra essere fallito il backup per l'host $HOST"
+  fi
+
+  curl -X POST -H "Authorization: Bearer $HC_AUTH_TOKEN" -H "Content-Type: application/json" -H "Cache-Control: no-cache" -H "Postman-Token: 2f858267-0a95-b003-9af1-0202568d1e5e" -d '{
+      "color": $COLOR,
+      "message": $MESSAGE,
+      "notify": false,
+      "message_format": "text"
+    }' "https://api.hipchat.com/v2/room/${HC_ROOM_NAME}/notification"
 }
 
 # sendmail (  )
