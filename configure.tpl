@@ -1,9 +1,15 @@
-##	Config for backup.sh 
+##	Config for backup.sh
 
 # Backup save directory
 	BACKUP_DIR=""
 
-# Mail addresses to send log after backup complete ( can be single 
+# HipChat configuration
+
+# As per HipChat documentation room name or room ID are both valid
+# HC_ROOM_NAME=''
+# HC_AUTH_TOKEN=''
+
+# Mail addresses to send log after backup complete ( can be single
 #+	address or array
 	MAIL_ADDR=( "" )
 	MAIL_SUBJ=''
@@ -27,7 +33,7 @@
 
 # Retention Time
 #  You can set the retention time, above which rdiff-backup increments
-#+ will not be conserved. The format of this variable MUST be as stated 
+#+ will not be conserved. The format of this variable MUST be as stated
 #+ in rdiff-backup manual e.g.: 2D means  two days, 2W means two weeks ecc.
 
 #N.B.: at the moment is not possible to disable deletion of increments older
@@ -44,9 +50,9 @@
 # Log file info
 	LOG_MAIN_DIR="log"
 	LOG_EXTENSION=".log"
-	
+
 	# A separator must be present
 	#LOG_PREFIX=""
 	#LOG_SUFFIX=""
 
-	
+
