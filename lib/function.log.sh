@@ -96,25 +96,20 @@ function log() {
 }
 
 function hipchat_notification() {
-  [[$HC_ROOM_NAME]] || return 0; #silently return if room name is not set
+  test -z ${HC_ROOM_NAME+x} && return 0; #silently return if room name is not set
 
-  COMMAND_EXIT_STATUS = $1
-  HOST = $2
+  COMMAND_EXIT_STATUS=$1
+  HOST=$2
 
-  if [[$COMMAND_EXIT_STATUS -eq 0]]; then
-    COLOR = 'green'
-    MESSAGE = "Backup di $HOST terminato con successo"
+  if [[ $COMMAND_EXIT_STATUS -eq 0 ]]; then
+    COLOR='green'
+    MESSAGE="Backup di $HOST terminato con successo"
   else
-    COLOR = 'red'
-    MESSAGE = "Sembra essere fallito il backup per l'host $HOST"
+    COLOR='red'
+    MESSAGE="Sembra essere fallito il backup per l'host $HOST"
   fi
 
-  curl -X POST -H "Authorization: Bearer $HC_AUTH_TOKEN" -H "Content-Type: application/json" -H "Cache-Control: no-cache" -H "Postman-Token: 2f858267-0a95-b003-9af1-0202568d1e5e" -d '{
-      "color": $COLOR,
-      "message": $MESSAGE,
-      "notify": false,
-      "message_format": "text"
-    }' "https://api.hipchat.com/v2/room/${HC_ROOM_NAME}/notification"
+  curl -X POST -H "Authorization: Bearer $HC_AUTH_TOKEN" -H "Content-Type: application/json" -H "Cache-Control: no-cache" -d "{ \"color\": \"$COLOR\", \"message\": \"$MESSAGE\", \"notify\": \"false\", \"message_format\": \"text\" }" "https://api.hipchat.com/v2/room/${HC_ROOM_NAME}/notification"
 }
 
 # sendmail (  )
