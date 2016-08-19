@@ -7,6 +7,10 @@
 # The main backup function. Tass!
 function backup() {
 
+  if [ ${servconf[6]} ]
+    local BACKUP_DIR=${BACKUP_DIR}/${servconf[6]}
+  fi
+
   log "Backup local disk: $BACKUP_DIR"
 	log "Backup local conf: $CONF_DIR"
 	log "Log file         : $LOG"
@@ -36,6 +40,7 @@ function backup() {
 	  test_conf_dir $host || continue #test if both per host conf files exists
 	  . ${CONF_DIR}/${host}/host.conf #then source one of them
   	log "Using $host configuration"
+
     perhost_conf_parser
 
 	  if ${servconf[0]}; then #if remote
@@ -151,7 +156,12 @@ function test_conf_dir(){
 # Test if backup destination directory exists and if not
 #+create it.
 function test_dest_dir() {
-	local dir=${BACKUP_DIR}/${1}
+  if [ ${servconf[6]} ]
+    local dir=${BACKUP_DIR}/${servconf[6]}/${1}
+  else
+    local dir=${BACKUP_DIR}/${1}
+  fi
+
 
 	if [ -d $dir ]; then
   	log "> Backup directory for host exists"
