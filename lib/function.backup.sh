@@ -6,14 +6,15 @@
 # backup (  )
 # The main backup function. Tass!
 function backup() {
-
-  if [ ${servconf[6]} ]; then
-    local BACKUP_DIR=${BACKUP_DIR}/${servconf[6]}
-  fi
-
   log "Backup local disk: $BACKUP_DIR"
 	log "Backup local conf: $CONF_DIR"
 	log "Log file         : $LOG"
+
+  if [ ${servconf[6]} ]; then
+    local CURRENT_BACKUP_DIR=${BACKUP_DIR}/${servconf[6]}
+  else
+    local CURRENT_BACKUP_DIR=${BACKUP_DIR}
+  fi
 
 	log "Hosts:"
 	for host in `ls $CONF_DIR`
@@ -63,21 +64,21 @@ function backup() {
 		  #+operations with the proper function
 		  if ${servconf[3]}; then
         mount_sshfs || continue
-  		  logcmd "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host}"
+  		  logcmd "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${CURRENT_BACKUP_DIR}/${host}"
 
         hipchat_notification $? $host
 
         delete_older ${host}
       # else if is remote
       elif ${servconf[0]}; then
-        logcmd "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${user}${host}::${servconf[4]} ${BACKUP_DIR}/${host}"
+        logcmd "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${user}${host}::${servconf[4]} ${CURRENT_BACKUP_DIR}/${host}"
 
         hipchat_notification $? $host
 
         delete_older ${host}
       # last option is a local directory
       else
-        logcmd "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host}"
+        logcmd "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${CURRENT_BACKUP_DIR}/${host}"
 
         hipchat_notification $? $host
 
@@ -97,7 +98,9 @@ function backup() {
 
 function dry_run() {
   if [ ${servconf[6]} ]; then
-    local BACKUP_DIR=${BACKUP_DIR}/${servconf[6]}
+    local CURRENT_BACKUP_DIR=${BACKUP_DIR}/${servconf[6]}
+  else
+    local CURRENT_BACKUP_DIR=${BACKUP_DIR}
   fi
 
   if ${servconf[3]}; then #if a remotely mounted sshfs filesystem
@@ -110,13 +113,13 @@ function dry_run() {
   #if remote
   elif ${servconf[0]}; then
     log "TESTING $host"
-    log "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${user}${host}::${servconf[4]} ${BACKUP_DIR}/${host}"
+    log "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${user}${host}::${servconf[4]} ${CURRENT_BACKUP_DIR}/${host}"
     logcmd "rdiff-backup --test-server ${user}${host}::${servconf[4]}"
     hipchat_notification $? $host
   # last option is a local directory
   else
     log "TESTING $host"
-    log "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${BACKUP_DIR}/${host}"
+    log "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${CURRENT_BACKUP_DIR}/${host}"
     hipchat_notification $? $host
   fi
 }
@@ -125,14 +128,16 @@ function dry_run() {
 # Execs rdiff-backup --remove-older-than ${__ret} for the specified $host
 function delete_older() {
   if [ ${servconf[6]} ]; then
-    local BACKUP_DIR=${BACKUP_DIR}/${servconf[6]}
+    local CURRENT_BACKUP_DIR=${BACKUP_DIR}/${servconf[6]}
+  else
+    local CURRENT_BACKUP_DIR=${BACKUP_DIR}
   fi
 
   if [[ ! $1 ]]; then
     log "ERROR: Function delete_older() needs an argument"
     return
   fi
-  [[ $DELETEOLDER ]] && logcmd "rdiff-backup --force --remove-older-than ${__ret} ${BACKUP_DIR}/$1"
+  [[ $DELETEOLDER ]] && logcmd "rdiff-backup --force --remove-older-than ${__ret} ${CURRENT_BACKUP_DIR}/$1"
 }
 
 # test_rdiff (  )
