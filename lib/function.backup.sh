@@ -7,7 +7,7 @@
 # The main backup function. Tass!
 function backup() {
 
-  if [ ${servconf[6]} ]
+  if [ ${servconf[6]} ]; then
     local BACKUP_DIR=${BACKUP_DIR}/${servconf[6]}
   fi
 
@@ -156,7 +156,7 @@ function test_conf_dir(){
 # Test if backup destination directory exists and if not
 #+create it.
 function test_dest_dir() {
-  if [ ${servconf[6]} ]
+  if [ ${servconf[6]} ]; then
     local dir=${BACKUP_DIR}/${servconf[6]}/${1}
   else
     local dir=${BACKUP_DIR}/${1}
