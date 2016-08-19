@@ -96,6 +96,10 @@ function backup() {
 }
 
 function dry_run() {
+  if [ ${servconf[6]} ]; then
+    local BACKUP_DIR=${BACKUP_DIR}/${servconf[6]}
+  fi
+
   if ${servconf[3]}; then #if a remotely mounted sshfs filesystem
     mount_sshfs ${user}${host}::${servconf[4]} ${servconf[2]}
     log "TESTING mountpoint /mnt/$host"
@@ -120,6 +124,10 @@ function dry_run() {
 # delete_older ( $host )
 # Execs rdiff-backup --remove-older-than ${__ret} for the specified $host
 function delete_older() {
+  if [ ${servconf[6]} ]; then
+    local BACKUP_DIR=${BACKUP_DIR}/${servconf[6]}
+  fi
+
   if [[ ! $1 ]]; then
     log "ERROR: Function delete_older() needs an argument"
     return
