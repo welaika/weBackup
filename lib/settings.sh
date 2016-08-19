@@ -5,25 +5,25 @@ function usage () {
   echo -e "Usage: $0 [OPTIONS] [COMMAND]"
   echo -e "OPTIONS must be specified before COMMAND to be correctly executed."
   echo -e "Settings are defined in the file 'config' in the script folder ( edit before first run )."
-  
+
   echo -e "\nOPTIONS:"
-  
+
   echo -e "  --debug, -d"
   echo -e "    Prevent execution of rdiff-backup command and prints out on stdout the command that would be executed ( useful in testing )."
-  
+
   echo -e "  --mail, -m"
   echo -e "    Send mail with debug informations. Useful with -d to send a report mail with debug, which by default disable mail sending."
-  
+
   echo -e "  --verbose, -v"
   echo -e "    Prints out info on backup status; by default the script run in 'quiet' mode, so that no output is printed on stdout ( this mainly because is unuseful to have stdout in a cronjob ); whit verbose is possible to enable stdout output."
-  
+
   echo -e "  --version"
   echo -e "    Print script version."
-    
+
   echo -e "\nCOMMAND:"
   echo -e "  --backup, -b"
   echo -e "    Execute backup on defined servers/folders."
-  
+
   echo -e "  --restore, -r [ NOT IMPLEMENTED ]"
   echo -e "    Execute restore of backups."
   exit;
@@ -88,7 +88,7 @@ function perhost_conf_parser() {
 
   # If sshfs is not set or has wrong value we consider it false
   if [[ ${servconf[3]} != 'local' && ${servconf[3]} != 'sshfs' && ${servconf[3]} != false ]]; then servconf[3]=false; fi
-  
+
   # If rpath is not set we default to / (root)
   [[ ${servconf[4]} ]] || servconf[4]='/'
 
