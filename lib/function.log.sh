@@ -109,12 +109,14 @@ function hipchat_notification() {
   if [[ $COMMAND_EXIT_STATUS -eq 0 ]]; then
     COLOR='green'
     MESSAGE="Backup di $HOST terminato con successo"
+    NOTIFY='false'
   else
     COLOR='red'
     MESSAGE="Sembra essere fallito il backup per l'host $HOST"
+    NOTIFY='true'
   fi
 
-  curl -X POST -H "Authorization: Bearer $HC_AUTH_TOKEN" -H "Content-Type: application/json" -H "Cache-Control: no-cache" -d "{ \"color\": \"$COLOR\", \"message\": \"$MESSAGE\", \"notify\": \"false\", \"message_format\": \"text\" }" "https://api.hipchat.com/v2/room/${HC_ROOM_NAME}/notification"
+  curl -X POST -H "Authorization: Bearer $HC_AUTH_TOKEN" -H "Content-Type: application/json" -H "Cache-Control: no-cache" -d "{ \"color\": \"$COLOR\", \"message\": \"$MESSAGE\", \"notify\": \"$NOTIFY\", \"message_format\": \"text\" }" "https://api.hipchat.com/v2/room/${HC_ROOM_NAME}/notification"
 }
 
 # sendmail (  )
