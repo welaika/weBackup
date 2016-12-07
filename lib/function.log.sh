@@ -76,7 +76,7 @@ function logcmd() {
   logdate >> $LOG
   $1 >> $LOG 2>&1
 
-  COMMAND_EXIT_STATUS = $?
+  COMMAND_EXIT_STATUS=$?
 
   [[ $VERBOSE -eq 1 || $DEBUG -eq 1 ]] && (
       logdate
