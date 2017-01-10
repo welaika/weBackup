@@ -6,7 +6,7 @@ HOW TO - INSTALL
 ----------------
 
 1. Untar package or
-    
+
         git clone git://github.com/welaika/weBackup.git
 
 2. Install rdiff-backup on local machine
@@ -20,7 +20,7 @@ HOW TO - INSTALL
     system (this one!) with "apt-get install sshfs" for debian-based OS or equivalent
     command.
 6. Have a "configure" file
-        
+
         cp configure.tpl configure
 
   read and set it up
@@ -116,7 +116,7 @@ all other path.
 
 REMEBER that if you want to exclude a specific dir inside a dir you want
 to backup you have, e.g.:
-    
+
     /home/pioneerskies/dev
     /home/pioneerskies/web
     - /home/pioneerskies/git/weBackup
@@ -169,3 +169,19 @@ REFERENCES
 <http://www.nongnu.org/rdiff-backup/>
 
 <http://wiki.rdiff-backup.org/wiki/index.php/BackupSomeDirectoriesOnly>
+
+## Author
+
+made with ❤️ and ☕️ by [weLaika](http://dev.welaika.com)
+
+## License
+
+(The MIT License)
+
+Copyright © 2017 [weLaika](http://dev.welaika.com)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the ‘Software’), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED ‘AS IS’, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
