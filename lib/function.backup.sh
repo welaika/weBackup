@@ -66,21 +66,21 @@ function backup() {
         mount_sshfs || continue
   		  logcmd "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${CURRENT_BACKUP_DIR}/${host}"
 
-        hipchat_notification $? $host
+        chat_notification $? $host
 
         delete_older ${host}
       # else if is remote
       elif ${servconf[0]}; then
         logcmd "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${user}${host}::${servconf[4]} ${CURRENT_BACKUP_DIR}/${host}"
 
-        hipchat_notification $? $host
+        chat_notification $? $host
 
         delete_older ${host}
       # last option is a local directory
       else
         logcmd "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${CURRENT_BACKUP_DIR}/${host}"
 
-        hipchat_notification $? $host
+        chat_notification $? $host
 
         delete_older ${host}
       fi
@@ -115,12 +115,12 @@ function dry_run() {
     log "TESTING $host"
     log "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${user}${host}::${servconf[4]} ${CURRENT_BACKUP_DIR}/${host}"
     logcmd "rdiff-backup --test-server ${user}${host}::${servconf[4]}"
-    hipchat_notification $? $host
+    chat_notification $? $host
   # last option is a local directory
   else
     log "TESTING $host"
     log "rdiff-backup --print-statistics --exclude-special-files --verbosity $RDIFF_VERBOSITY --include-globbing-filelist ${CONF_DIR}/${host}/globbing.conf ${servconf[2]} ${CURRENT_BACKUP_DIR}/${host}"
-    hipchat_notification $? $host
+    chat_notification $? $host
   fi
 }
 

@@ -100,8 +100,66 @@ function log() {
     )
 }
 
+function chat_notification() {
+  COMMAND_EXIT_STATUS=$1
+  HOST=$2
+
+  if [[ ${servconf[7]} == "false" ]]; then
+    return 0;
+  fi
+
+  if [[ ${servconf[7]} == "hipchat" ]]; then
+    HC_ROOM_NAME=${servconf[8]}
+    HC_AUTH_TOKEN=${servconf[9]}
+
+    if test -z $HC_ROOM_NAME; then
+      log "Non e' impostata la room name per HipChat"
+      return 1;
+    fi
+
+    if test -z $HC_AUTH_TOKEN; then
+      log "Non e' impostato il token per HipChat"
+      return 1;
+    fi
+
+    hipchat_notification $COMMAND_EXIT_STATUS $HOST
+    return 0;
+  fi
+
+  if [[ ${servconf[7]} == "ryver" ]]; then
+    RY_WEBHOOK=${servconf[10]}
+
+    if test -z $RY_WEBHOOK; then
+      log "Non e' impostato il WebHook per Ryver"
+      return 1;
+    fi
+
+    ryver_notification $COMMAND_EXIT_STATUS $HOST
+    return 0;
+  fi
+
+  log "La configurazione delle notifiche via chat non e' corretta"
+  return 1;
+}
+
+function ryver_notification() {
+  COMMAND_EXIT_STATUS=$1
+  HOST=$2
+
+  if [[ $COMMAND_EXIT_STATUS -eq 0 ]]; then
+    MESSAGE=":white_check_mark: Backup riuscito
+> Host: $HOST"
+  else
+    MESSAGE=":cross_mark: Backup fallito
+> Host: $HOST"
+  fi
+
+  curl -X POST -H "Content-Type: text/plain; charset=utf-8" \
+    -d "${MESSAGE}" ${RY_WEBHOOK}
+}
+
 function hipchat_notification() {
-  test -z ${HC_ROOM_NAME+x} && return 0; #silently return if room name is not set
+  test -z ${HC_ROOM_NAME} && return 0; #silently return if room name is not set
 
   COMMAND_EXIT_STATUS=$1
   HOST=$2

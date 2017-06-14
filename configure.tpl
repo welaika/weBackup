@@ -3,12 +3,6 @@
 # Backup save directory
 	BACKUP_DIR=""
 
-# HipChat configuration
-
-# As per HipChat documentation room name or room ID are both valid
-# HC_ROOM_NAME=''
-# HC_AUTH_TOKEN=''
-
 # Mail addresses to send log after backup complete ( can be single
 #+	address or array
 	MAIL_ADDR=( "" )
