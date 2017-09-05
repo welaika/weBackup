@@ -150,7 +150,7 @@ function ryver_notification() {
     MESSAGE=":white_check_mark: Backup riuscito
 > Host: $HOST"
   else
-    MESSAGE=":cross_mark: Backup fallito
+    MESSAGE=":skull_and_crossbones: Backup fallito
 > Host: $HOST"
   fi
 
