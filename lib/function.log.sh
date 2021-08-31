@@ -138,6 +138,18 @@ function chat_notification() {
     return 0;
   fi
 
+  if [[ ${servconf[7]} == "msteams" ]]; then
+    MSTEAMS_WEBHOOK=${servconf[11]}
+
+    if test -z $MSTEAMS_WEBHOOK; then
+      log "Non e' impostato il WebHook per MS Teams"
+      return 1;
+    fi
+
+    msteams_notification $COMMAND_EXIT_STATUS $HOST
+    return 0;
+  fi
+
   log "La configurazione delle notifiche via chat non e' corretta"
   return 1;
 }
@@ -156,6 +168,22 @@ function ryver_notification() {
 
   curl -X POST -H "Content-Type: text/plain; charset=utf-8" \
     -d "${MESSAGE}" ${RY_WEBHOOK}
+}
+
+function msteams_notification() {
+  COMMAND_EXIT_STATUS=$1
+  HOST=$2
+
+  if [[ $COMMAND_EXIT_STATUS -eq 0 ]]; then
+    COLOR="7cfc00"
+    MESSAGE="✅ Backup riuscito"
+  else
+    COLOR="ff0000"
+    MESSAGE="☠️ Backup fallito"
+  fi
+
+  curl -X POST -H "Content-Type: application/json; charset=utf-8" \
+    -d "{ \"summary\": \"Card weBackup\", \"themeColor\": \"$COLOR\", \"title\": \"Offsite backup per ${HOST}\", \"sections\": [ { \"activityTitle\": \"weBackup\", \"activitySubtitle\": \"\", \"activityImage\": \"https://p195.p4.n0.cdn.getcloudapp.com/items/Z4ujjqz1/0384897c-a30b-48e7-ab29-77e929cbbe21.png?v=90283dc597ca3ee15017dedefc9fc1c8\", \"facts\": [ { \"name\": \"Host:\", \"value\": \"${HOST}\" }, { \"name\": \"Stato:\", \"value\": \"${MESSAGE}\" } ], \"text\": \"\" } ], \"potentialAction\": [] }" "${MSTEAMS_WEBHOOK}"
 }
 
 function hipchat_notification() {
